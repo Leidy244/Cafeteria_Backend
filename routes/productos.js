@@ -47,12 +47,12 @@ router.post("/", upload.single("imagen"), (req, res) => {
                      VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     const paramsProd = [
-        nombre, 
-        Number(precioIngreso), 
-        Number(precioVenta || 0), 
-        Number(cantidad || 0), 
-        descripcion || "", 
-        imagenRuta, 
+        nombre,
+        Number(precioIngreso),
+        Number(precioVenta || 0),
+        Number(cantidad || 0),
+        descripcion || "",
+        imagenRuta,
         tipo.toLowerCase().trim()
     ];
 
@@ -66,32 +66,42 @@ router.post("/", upload.single("imagen"), (req, res) => {
         const tipoL = tipo.toLowerCase().trim();
 
         // --- LÓGICA DE GASTO ---
+       // --- LÓGICA DE GASTO (Corregida y Limpia) ---
         if (tipoL === "insumo" || tipoL === "equipo") {
-            const montoBase = req.body.total || precioIngreso;
-            const gastoTotal = Number(montoBase);
+            const unidades = Number(cantidad || 1);
+            const precioUnitario = Number(precioIngreso);
+            const gastoTotal = unidades * precioUnitario;
+
             const tId = (turnoId && turnoId !== "null" && turnoId !== "") ? turnoId : null;
 
+            // Aquí es donde sucede la magia: cambiamos 'INVENTARIO' por la variable nombre
             const sqlGasto = `
                 INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo) 
-                VALUES (?, 'INVENTARIO', 'efectivo', 'pagado', ?, 
+                VALUES (?, ?, 'efectivo', 'pagado', ?, 
                 COALESCE(?, (SELECT id FROM caja WHERE estado = 'abierto' ORDER BY id DESC LIMIT 1)), ?)
             `;
-            
-            db.run(sqlGasto, [gastoTotal, new Date().toISOString(), tId, tipoL], (errGasto) => {
+
+            // Ejecutamos UNA SOLA VEZ el gasto con los datos reales
+            db.run(sqlGasto, [
+                gastoTotal, 
+                nombre,       // <--- Aquí enviamos el nombre real (ej: "Café", "Leche")
+                new Date().toISOString(), 
+                tId, 
+                tipoL
+            ], (errGasto) => {
                 if (errGasto) {
                     console.error("❌ Error al registrar gasto:", errGasto.message);
                     return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto guardado, error en caja." });
                 }
-                console.log(`✅ Gasto de ${tipoL} registrado: $${gastoTotal}`);
-                return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto y gasto registrados." });
+                console.log(`✅ Gasto de ${tipoL} registrado: ${nombre} por $${gastoTotal}`);
+                return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto y gasto total registrados." });
             });
-        } 
-        // --- MUY IMPORTANTE: Respuesta para productos normales ---
+        }
         else {
-            return res.status(201).json({ 
-                id: nuevoProductoId, 
-                imagen: imagenRuta, 
-                mensaje: "Producto registrado correctamente." 
+            return res.status(201).json({
+                id: nuevoProductoId,
+                imagen: imagenRuta,
+                mensaje: "Producto registrado correctamente."
             });
         }
     });
@@ -102,7 +112,7 @@ router.put("/:id", upload.single("imagen"), (req, res) => {
     const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo } = req.body;
     const { id } = req.params;
 
-    let imagenRuta = req.body.imagen; 
+    let imagenRuta = req.body.imagen;
     if (req.file) {
         imagenRuta = `/imagenes/${req.file.filename}`;
     }
