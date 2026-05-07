@@ -10,7 +10,6 @@ router.post("/", (req, res) => {
     const pagoNormalizado = metodoPago ? metodoPago.toLowerCase().trim() : "efectivo";
     const tipoFinal = tipo || "venta";
 
-    // A. Insertamos la cabecera de la venta
     db.run(
         `INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo) VALUES (?, ?, ?, ?, ?, ?, ?)`,
         [total, mesa || "N/A", pagoNormalizado, "pagado", new Date().toISOString(), turnoId || null, tipoFinal],
@@ -19,33 +18,27 @@ router.post("/", (req, res) => {
 
             const ventaId = this.lastID;
 
-            // Si es un gasto simple sin carrito de productos
             if (!carrito || carrito.length === 0) {
                 return res.json({ mensaje: `${tipoFinal} registrado ✅`, ventaId });
             }
 
-            // 1. Agrupamos productos usando la cantidad real que viene del frontend
+            // Agrupamos productos para no hacer múltiples inserts del mismo item
             const productosVendidos = {};
             carrito.forEach(item => {
                 const id = item.id;
-                // Usamos item.cantidad (lo que el usuario eligió) o 1 por defecto
                 const cantidadReal = Number(item.cantidad) || 1; 
 
                 if (!productosVendidos[id]) {
                     productosVendidos[id] = { ...item, cantidadAcumulada: 0 };
                 }
-                
-                // Sumamos la cantidad real al acumulado
                 productosVendidos[id].cantidadAcumulada += cantidadReal;
             });
 
             const itemsUnicos = Object.values(productosVendidos);
             let completados = 0;
 
-            // 2. Procesamos cada producto único para actualizar stock y detalles
             itemsUnicos.forEach(prod => {
-                
-                // B. Insertar en detalle_ventas con la cantidad acumulada real
+                // A. Insertar detalle de venta
                 db.run(
                     `INSERT INTO detalle_ventas (venta_id, producto_id, nombre, precioIngreso, precioVenta, cantidad) 
                      VALUES (?, ?, ?, ?, ?, ?)`,
@@ -53,29 +46,49 @@ router.post("/", (req, res) => {
                     (errDetalle) => {
                         if (errDetalle) console.error("❌ Error detalle:", errDetalle.message);
 
-                        // C. Descontar del stock la cantidad acumulada (ej: las 5 galletas de una vez)
+                        // B. Descuento de Stock Normal
+                        // Quitamos la restricción "AND cantidad >= ?" para productos tipo 'venta' 
+                        // que dependen de pulpas, así el "Jugo" puede bajar a negativo o 0 sin frenar la lógica.
                         db.run(
-                            `UPDATE productos 
-                             SET cantidad = cantidad - ? 
-                             WHERE id = ? AND cantidad >= ?`,
-                            [prod.cantidadAcumulada, prod.id, prod.cantidadAcumulada],
-                            function (errStock) {
-                                if (errStock) {
-                                    console.error("❌ Error stock:", errStock.message);
-                                } else if (this.changes === 0) {
-                                    console.warn(`⚠️ Stock insuficiente para ID: ${prod.id}`);
-                                }
-
-                                completados++;
-                                // Cuando todos los productos terminan, respondemos y limpiamos pedidos
-                                if (completados === itemsUnicos.length) {
-                                    if (mesa && mesa !== "N/A") {
-                                        db.run(`DELETE FROM pedidos WHERE mesa = ?`, [mesa]);
-                                    }
-                                    return res.json({ mensaje: "Venta y stock actualizados correctamente ✅", ventaId });
-                                }
-                            }
+                            `UPDATE productos SET cantidad = cantidad - ? WHERE id = ?`,
+                            [prod.cantidadAcumulada, prod.id]
                         );
+
+                        // C. ✨ LÓGICA DE PULPAS: Descuento automático por sabor
+                        // Esta es la parte que controla las 20 unidades reales de tu insumo
+                        const sabores = ["Mango", "Mora", "Fresa", "Lulo", "Maracuya", "Guanabana", "Chamba"];
+                        const saborEncontrado = sabores.find(s => 
+                            prod.nombre.toLowerCase().includes(s.toLowerCase())
+                        );
+
+                        if (saborEncontrado) {
+                            console.log(`🍓 Sabor detectado: ${saborEncontrado}. Buscando insumo...`);
+                            
+                            db.run(
+                                `UPDATE productos 
+                                 SET cantidad = cantidad - ? 
+                                 WHERE subTipo = 'pulpa' 
+                                 AND nombre LIKE ? 
+                                 AND cantidad > 0`,
+                                [prod.cantidadAcumulada, `%${saborEncontrado}%`],
+                                function(errPulpa) {
+                                    if (errPulpa) console.error("❌ Error pulpa:", errPulpa.message);
+                                    if (this.changes > 0) {
+                                        console.log(`✅ Stock REAL de Pulpa ${saborEncontrado} actualizado.`);
+                                    } else {
+                                        console.warn(`⚠️ No se encontró stock de pulpa para ${saborEncontrado}`);
+                                    }
+                                }
+                            );
+                        }
+
+                        completados++;
+                        if (completados === itemsUnicos.length) {
+                            if (mesa && mesa !== "N/A") {
+                                db.run(`DELETE FROM pedidos WHERE mesa = ?`, [mesa]);
+                            }
+                            return res.json({ mensaje: "Venta e inventario de pulpas sincronizados ✅", ventaId });
+                        }
                     }
                 );
             });
@@ -125,10 +138,10 @@ router.get("/resumen-turno/:turnoId", (req, res) => {
                 } 
                 else if (tipo.includes('insu')) {
                     resumen.insumos += monto;
-                    resumen.totalAcumulado -= monto;
+                    resumen.totalAcumulado -= monto; // Los insumos restan a la caja (gasto)
                 } else if (tipo.includes('equi')) {
                     resumen.equipos += monto;
-                    resumen.totalAcumulado -= monto;
+                    resumen.totalAcumulado -= monto; // Los equipos restan a la caja (gasto)
                 }
             });
 

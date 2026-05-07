@@ -34,17 +34,18 @@ router.get("/", (req, res) => {
     });
 });
 
-// 2. CREAR PRODUCTO (Corregido: Manejo de flujo y tipos de datos)
 router.post("/", upload.single("imagen"), (req, res) => {
-    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo, turnoId } = req.body;
+    // 1. Recibimos subTipo del body
+    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo, turnoId, subTipo } = req.body;
     const imagenRuta = req.file ? `/imagenes/${req.file.filename}` : null;
 
     if (!nombre || !precioIngreso || !tipo) {
         return res.status(400).json({ error: "Faltan datos obligatorios." });
     }
 
-    const sqlProd = `INSERT INTO productos (nombre, precioIngreso, precioVenta, cantidad, descripcion, imagen, tipo)
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    // 2. Añadimos subTipo a la consulta SQL
+    const sqlProd = `INSERT INTO productos (nombre, precioIngreso, precioVenta, cantidad, descripcion, imagen, tipo, subTipo)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const paramsProd = [
         nombre,
@@ -53,7 +54,8 @@ router.post("/", upload.single("imagen"), (req, res) => {
         Number(cantidad || 0),
         descripcion || "",
         imagenRuta,
-        tipo.toLowerCase().trim()
+        tipo.toLowerCase().trim(),
+        subTipo || "general" // <--- Guardamos si es 'pulpa' o 'general'
     ];
 
     db.run(sqlProd, paramsProd, function (err) {
@@ -65,51 +67,33 @@ router.post("/", upload.single("imagen"), (req, res) => {
         const nuevoProductoId = this.lastID;
         const tipoL = tipo.toLowerCase().trim();
 
-        // --- LÓGICA DE GASTO ---
-       // --- LÓGICA DE GASTO (Corregida y Limpia) ---
         if (tipoL === "insumo" || tipoL === "equipo") {
             const unidades = Number(cantidad || 1);
             const precioUnitario = Number(precioIngreso);
             const gastoTotal = unidades * precioUnitario;
-
             const tId = (turnoId && turnoId !== "null" && turnoId !== "") ? turnoId : null;
 
-            // Aquí es donde sucede la magia: cambiamos 'INVENTARIO' por la variable nombre
             const sqlGasto = `
                 INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo) 
                 VALUES (?, ?, 'efectivo', 'pagado', ?, 
                 COALESCE(?, (SELECT id FROM caja WHERE estado = 'abierto' ORDER BY id DESC LIMIT 1)), ?)
             `;
 
-            // Ejecutamos UNA SOLA VEZ el gasto con los datos reales
-            db.run(sqlGasto, [
-                gastoTotal, 
-                nombre,       // <--- Aquí enviamos el nombre real (ej: "Café", "Leche")
-                new Date().toISOString(), 
-                tId, 
-                tipoL
-            ], (errGasto) => {
+            db.run(sqlGasto, [gastoTotal, nombre, new Date().toISOString(), tId, tipoL], (errGasto) => {
                 if (errGasto) {
-                    console.error("❌ Error al registrar gasto:", errGasto.message);
                     return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto guardado, error en caja." });
                 }
-                console.log(`✅ Gasto de ${tipoL} registrado: ${nombre} por $${gastoTotal}`);
                 return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto y gasto total registrados." });
             });
-        }
-        else {
-            return res.status(201).json({
-                id: nuevoProductoId,
-                imagen: imagenRuta,
-                mensaje: "Producto registrado correctamente."
-            });
+        } else {
+            return res.status(201).json({ id: nuevoProductoId, imagen: imagenRuta, mensaje: "Producto registrado correctamente." });
         }
     });
 });
 
-// 3. ACTUALIZAR PRODUCTO (Corregido para manejar imagen previa)
+// 3. ACTUALIZAR PRODUCTO (También debe actualizar subTipo)
 router.put("/:id", upload.single("imagen"), (req, res) => {
-    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo } = req.body;
+    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo, subTipo } = req.body;
     const { id } = req.params;
 
     let imagenRuta = req.body.imagen;
@@ -118,10 +102,10 @@ router.put("/:id", upload.single("imagen"), (req, res) => {
     }
 
     const sql = `UPDATE productos 
-                 SET nombre=?, precioIngreso=?, precioVenta=?, cantidad=?, descripcion=?, imagen=?, tipo=? 
+                 SET nombre=?, precioIngreso=?, precioVenta=?, cantidad=?, descripcion=?, imagen=?, tipo=?, subTipo=? 
                  WHERE id=?`;
 
-    db.run(sql, [nombre, precioIngreso, precioVenta, cantidad, descripcion, imagenRuta, tipo, id], function (err) {
+    db.run(sql, [nombre, precioIngreso, precioVenta, cantidad, descripcion, imagenRuta, tipo, subTipo, id], function (err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ mensaje: "Actualizado correctamente", imagen: imagenRuta });
     });
@@ -141,5 +125,34 @@ router.delete("/:id", (req, res) => {
         });
     });
 });
+
+// Esta función se ejecuta al confirmar cualquier pedido
+const descontarInventarioVariable = (productoVendido) => {
+    const nombre = productoVendido.nombre.toLowerCase();
+    let saborDetectado = null;
+
+    // Lista de sabores que manejas en pulpas
+    const sabores = ["mango", "mora", "chamba", "lulo", "guanabana"];
+
+    // Buscamos si el producto vendido contiene algún sabor de pulpa
+    saborDetectado = sabores.find(s => nombre.includes(s));
+
+    if (saborDetectado) {
+        // Descontamos 1 unidad del insumo que coincida con el sabor
+        const sql = `
+      UPDATE productos 
+      SET cantidad = cantidad - 1 
+      WHERE subTipo = 'pulpa' 
+      AND nombre LIKE ? 
+      AND cantidad > 0
+    `;
+
+        db.run(sql, [`%${saborDetectado}%`], function (err) {
+            if (this.changes === 0) {
+                console.warn(`⚠️ No se pudo descontar: ${saborDetectado} está agotado.`);
+            }
+        });
+    }
+};
 
 module.exports = router;

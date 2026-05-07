@@ -61,7 +61,6 @@ router.put("/cerrar/:id", (req, res) => {
 });
 
 // 4. RESUMEN DE TURNO (Optimizado)
-// 4. RESUMEN DE TURNO (Corregido para separar Nequi de Efectivo)
 router.get("/resumen-turno/:turnoId", (req, res) => {
     const { turnoId } = req.params;
 

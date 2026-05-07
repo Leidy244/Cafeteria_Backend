@@ -10,7 +10,8 @@ db.run(`CREATE TABLE IF NOT EXISTS productos (
     cantidad INTEGER,
     descripcion TEXT,
     imagen TEXT,
-    tipo TEXT -- 'venta', 'equipo', 'insumo'
+    tipo TEXT, -- 'venta', 'equipo', 'insumo'
+    subTipo TEXT DEFAULT 'general' 
 )`);
 
 // 2. VENTAS
@@ -44,6 +45,8 @@ db.run(`
 db.run(`CREATE TABLE IF NOT EXISTS caja (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   montoInicial REAL DEFAULT 0,
+  montoEfectivo REAL DEFAULT 0, 
+  montoNequi REAL DEFAULT 0,   
   montoFinal REAL DEFAULT 0,
   fechaApertura TEXT,
   fechaCierre TEXT,
