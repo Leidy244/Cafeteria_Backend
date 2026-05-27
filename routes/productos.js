@@ -35,15 +35,14 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", upload.single("imagen"), (req, res) => {
-    // 1. Recibimos subTipo del body
-    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo, turnoId, subTipo } = req.body;
+    // 1. Recibimos también metodoPago del body
+    const { nombre, precioIngreso, precioVenta, cantidad, descripcion, tipo, turnoId, subTipo, metodoPago } = req.body;
     const imagenRuta = req.file ? `/imagenes/${req.file.filename}` : null;
 
     if (!nombre || !precioIngreso || !tipo) {
         return res.status(400).json({ error: "Faltan datos obligatorios." });
     }
 
-    // 2. Añadimos subTipo a la consulta SQL
     const sqlProd = `INSERT INTO productos (nombre, precioIngreso, precioVenta, cantidad, descripcion, imagen, tipo, subTipo)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
@@ -55,7 +54,7 @@ router.post("/", upload.single("imagen"), (req, res) => {
         descripcion || "",
         imagenRuta,
         tipo.toLowerCase().trim(),
-        subTipo || "general" // <--- Guardamos si es 'pulpa' o 'general'
+        subTipo || "general"
     ];
 
     db.run(sqlProd, paramsProd, function (err) {
@@ -67,23 +66,35 @@ router.post("/", upload.single("imagen"), (req, res) => {
         const nuevoProductoId = this.lastID;
         const tipoL = tipo.toLowerCase().trim();
 
+        // 2. LÓGICA DE DESCUENTO DE CAJA PARA INSUMOS/EQUIPO
         if (tipoL === "insumo" || tipoL === "equipo") {
             const unidades = Number(cantidad || 1);
             const precioUnitario = Number(precioIngreso);
             const gastoTotal = unidades * precioUnitario;
+
+            // Usamos el metodoPago que viene del frontend, o por defecto efectivo
+            const metodo = metodoPago || 'efectivo';
+
             const tId = (turnoId && turnoId !== "null" && turnoId !== "") ? turnoId : null;
 
+            /* Guardamos el gasto en la tabla 'ventas'. 
+               IMPORTANTE: Guardamos el valor como NEGATIVO para que al sumar el reporte 
+               se reste del total automáticamente, o lo marcamos por el 'tipo'.
+            */
             const sqlGasto = `
                 INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo) 
-                VALUES (?, ?, 'efectivo', 'pagado', ?, 
+                VALUES (?, ?, ?, 'pagado', ?, 
                 COALESCE(?, (SELECT id FROM caja WHERE estado = 'abierto' ORDER BY id DESC LIMIT 1)), ?)
             `;
 
-            db.run(sqlGasto, [gastoTotal, nombre, new Date().toISOString(), tId, tipoL], (errGasto) => {
+            // Nota: Guardamos gastoTotal (positivo) pero el 'tipo' (insumo/equipo) 
+            // le dirá a tu reporte que es una salida de dinero.
+            db.run(sqlGasto, [gastoTotal, `COMPRA: ${nombre}`, metodo, new Date().toISOString(), tId, tipoL], (errGasto) => {
                 if (errGasto) {
-                    return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto guardado, error en caja." });
+                    console.error("Error al registrar gasto:", errGasto.message);
+                    return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto guardado, error en reporte de caja." });
                 }
-                return res.status(201).json({ id: nuevoProductoId, mensaje: "Producto y gasto total registrados." });
+                return res.status(201).json({ id: nuevoProductoId, mensaje: `Compra registrada en ${metodo}.` });
             });
         } else {
             return res.status(201).json({ id: nuevoProductoId, imagen: imagenRuta, mensaje: "Producto registrado correctamente." });

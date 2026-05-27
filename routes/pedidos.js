@@ -22,17 +22,58 @@ router.post("/", (req, res) => {
         function (err) {
             if (err) return res.status(500).json({ error: err.message });
 
-            // Descontar stock inicial
+            const pedidoId = this.lastID;
+
             carrito.forEach(item => {
-                db.run(`UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`, [item.cantidad || 1, item.id]);
+                // Descuento stock normal
+                db.run(
+                    `UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`,
+                    [item.cantidad || 1, item.id]
+                );
+
+                // Descuento pulpa por subTipo
+                const tieneVinculo = item.subTipo &&
+                    item.subTipo !== 'general' &&
+                    item.subTipo !== 'pulpa';
+
+                if (tieneVinculo) {
+                    console.log(`🍓 [POST pedido] Verificando pulpa: ${item.subTipo}`);
+
+                    db.get(
+                        `SELECT cantidad FROM productos WHERE subTipo = 'pulpa' AND LOWER(nombre) LIKE LOWER(?)`,
+                        [`%${item.subTipo}%`],
+                        function (errCheck, pulpa) {
+                            if (!pulpa || pulpa.cantidad <= 0) {
+                                console.warn(`⚠️ Sin stock de pulpa para: ${item.subTipo}`);
+                                return;
+                            }
+                            db.run(
+                                `UPDATE productos 
+                                 SET cantidad = MAX(0, cantidad - ?)
+                                 WHERE subTipo = 'pulpa' 
+                                 AND LOWER(nombre) LIKE LOWER(?)
+                                 AND cantidad > 0`,
+                                [item.cantidad || 1, `%${item.subTipo}%`],
+                                function (errPulpa) {
+                                    if (errPulpa) console.error("❌ Error pulpa POST:", errPulpa.message);
+                                    if (this.changes > 0) {
+                                        console.log(`✅ Pulpa ${item.subTipo} descontada.`);
+                                    } else {
+                                        console.warn(`⚠️ Sin stock de pulpa para: ${item.subTipo}`);
+                                    }
+                                }
+                            );
+                        }
+                    );
+                }
             });
 
-            res.json({ id: this.lastID, mensaje: "Guardado ✅" });
+            res.json({ id: pedidoId, mensaje: "Guardado ✅" });
         }
     );
 });
 
-// ✅ ACTUALIZAR PEDIDO (El que descuenta la diferencia)
+// ✅ ACTUALIZAR PEDIDO (descuenta solo la diferencia)
 router.put("/:id", (req, res) => {
     const { carrito, total, mesa, estado } = req.body;
     const pedidoId = req.params.id;
@@ -48,16 +89,56 @@ router.put("/:id", (req, res) => {
             function (errUpdate) {
                 if (errUpdate) return res.status(500).json({ error: errUpdate.message });
 
-                // Lógica de stock por diferencia
                 carrito.forEach(itemNuevo => {
                     const itemViejo = carritoViejo.find(v => v.id === itemNuevo.id);
                     const cantAnt = itemViejo ? itemViejo.cantidad : 0;
                     const dif = itemNuevo.cantidad - cantAnt;
 
                     if (dif > 0) {
-                        db.run(`UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`, [dif, itemNuevo.id]);
+                        // Descuento stock normal por diferencia
+                        db.run(
+                            `UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`,
+                            [dif, itemNuevo.id]
+                        );
+
+                        // Descuento pulpa por diferencia y subTipo
+                        const tieneVinculo = itemNuevo.subTipo &&
+                            itemNuevo.subTipo !== 'general' &&
+                            itemNuevo.subTipo !== 'pulpa';
+
+                        if (tieneVinculo) {
+                            console.log(`🍓 [PUT pedido] Verificando pulpa: ${itemNuevo.subTipo} (dif: ${dif})`);
+
+                            db.get(
+                                `SELECT cantidad FROM productos WHERE subTipo = 'pulpa' AND LOWER(nombre) LIKE LOWER(?)`,
+                                [`%${itemNuevo.subTipo}%`],
+                                function (errCheck, pulpa) {
+                                    if (!pulpa || pulpa.cantidad <= 0) {
+                                        console.warn(`⚠️ Sin stock de pulpa para: ${itemNuevo.subTipo}`);
+                                        return;
+                                    }
+                                    db.run(
+                                        `UPDATE productos 
+                                         SET cantidad = MAX(0, cantidad - ?)
+                                         WHERE subTipo = 'pulpa' 
+                                         AND LOWER(nombre) LIKE LOWER(?)
+                                         AND cantidad > 0`,
+                                        [dif, `%${itemNuevo.subTipo}%`],
+                                        function (errPulpa) {
+                                            if (errPulpa) console.error("❌ Error pulpa PUT:", errPulpa.message);
+                                            if (this.changes > 0) {
+                                                console.log(`✅ Pulpa ${itemNuevo.subTipo} descontada (dif x${dif}).`);
+                                            } else {
+                                                console.warn(`⚠️ Sin stock de pulpa para: ${itemNuevo.subTipo}`);
+                                            }
+                                        }
+                                    );
+                                }
+                            );
+                        }
                     }
                 });
+
                 res.json({ mensaje: "Actualizado ✅" });
             }
         );

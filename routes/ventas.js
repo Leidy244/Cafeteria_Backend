@@ -22,12 +22,10 @@ router.post("/", (req, res) => {
                 return res.json({ mensaje: `${tipoFinal} registrado ✅`, ventaId });
             }
 
-            // Agrupamos productos para no hacer múltiples inserts del mismo item
             const productosVendidos = {};
             carrito.forEach(item => {
                 const id = item.id;
-                const cantidadReal = Number(item.cantidad) || 1; 
-
+                const cantidadReal = Number(item.cantidad) || 1;
                 if (!productosVendidos[id]) {
                     productosVendidos[id] = { ...item, cantidadAcumulada: 0 };
                 }
@@ -46,37 +44,44 @@ router.post("/", (req, res) => {
                     (errDetalle) => {
                         if (errDetalle) console.error("❌ Error detalle:", errDetalle.message);
 
-                        // B. Descuento de Stock Normal
-                        // Quitamos la restricción "AND cantidad >= ?" para productos tipo 'venta' 
-                        // que dependen de pulpas, así el "Jugo" puede bajar a negativo o 0 sin frenar la lógica.
+                        // B. Descuento stock normal (nunca baja de 0)
                         db.run(
-                            `UPDATE productos SET cantidad = cantidad - ? WHERE id = ?`,
+                            `UPDATE productos SET cantidad = MAX(0, cantidad - ?) WHERE id = ?`,
                             [prod.cantidadAcumulada, prod.id]
                         );
 
-                        // C. ✨ LÓGICA DE PULPAS: Descuento automático por sabor
-                        // Esta es la parte que controla las 20 unidades reales de tu insumo
-                        const sabores = ["Mango", "Mora", "Fresa", "Lulo", "Maracuya", "Guanabana", "Chamba"];
-                        const saborEncontrado = sabores.find(s => 
-                            prod.nombre.toLowerCase().includes(s.toLowerCase())
-                        );
+                        // C. ✨ LÓGICA DE PULPAS: verificar stock antes de descontar
+                        const tieneVinculo = prod.subTipo &&
+                            prod.subTipo !== 'general' &&
+                            prod.subTipo !== 'pulpa';
 
-                        if (saborEncontrado) {
-                            console.log(`🍓 Sabor detectado: ${saborEncontrado}. Buscando insumo...`);
-                            
-                            db.run(
-                                `UPDATE productos 
-                                 SET cantidad = cantidad - ? 
-                                 WHERE subTipo = 'pulpa' 
-                                 AND nombre LIKE ? 
-                                 AND cantidad > 0`,
-                                [prod.cantidadAcumulada, `%${saborEncontrado}%`],
-                                function(errPulpa) {
-                                    if (errPulpa) console.error("❌ Error pulpa:", errPulpa.message);
-                                    if (this.changes > 0) {
-                                        console.log(`✅ Stock REAL de Pulpa ${saborEncontrado} actualizado.`);
+                        if (tieneVinculo) {
+                            console.log(`🍓 SubTipo detectado: ${prod.subTipo}. Verificando stock...`);
+
+                            db.get(
+                                `SELECT cantidad FROM productos 
+                                 WHERE subTipo = 'pulpa' AND LOWER(nombre) LIKE LOWER(?)`,
+                                [`%${prod.subTipo}%`],
+                                function (errCheck, pulpa) {
+                                    if (errCheck) console.error("❌ Error check pulpa:", errCheck.message);
+
+                                    if (!pulpa || pulpa.cantidad <= 0) {
+                                        console.warn(`⚠️ Sin stock de pulpa para: ${prod.subTipo}`);
                                     } else {
-                                        console.warn(`⚠️ No se encontró stock de pulpa para ${saborEncontrado}`);
+                                        db.run(
+                                            `UPDATE productos 
+                                             SET cantidad = MAX(0, cantidad - ?)
+                                             WHERE subTipo = 'pulpa' 
+                                             AND LOWER(nombre) LIKE LOWER(?)
+                                             AND cantidad > 0`,
+                                            [prod.cantidadAcumulada, `%${prod.subTipo}%`],
+                                            function (errPulpa) {
+                                                if (errPulpa) console.error("❌ Error pulpa:", errPulpa.message);
+                                                if (this.changes > 0) {
+                                                    console.log(`✅ Pulpa ${prod.subTipo} descontada (x${prod.cantidadAcumulada}).`);
+                                                }
+                                            }
+                                        );
                                     }
                                 }
                             );
@@ -101,12 +106,12 @@ router.post("/", (req, res) => {
    ========================================================================== */
 router.get("/resumen-turno/:turnoId", (req, res) => {
     const { turnoId } = req.params;
-    
+
     const sqlCaja = "SELECT montoInicial FROM caja WHERE id = ?";
-    
+
     db.get(sqlCaja, [turnoId], (err, caja) => {
         if (err) return res.status(500).json({ error: err.message });
-        
+
         const baseInicial = caja ? Number(caja.montoInicial) : 0;
         const sqlVentas = `SELECT tipo, metodoPago, total FROM ventas WHERE turnoId = ?`;
 
@@ -114,12 +119,12 @@ router.get("/resumen-turno/:turnoId", (req, res) => {
             if (err) return res.status(500).json({ error: err.message });
 
             const resumen = {
-                productos: 0, 
-                equipos: 0, 
+                productos: 0,
+                equipos: 0,
                 insumos: 0,
-                efectivo: 0, 
-                nequi: 0, 
-                totalAcumulado: baseInicial 
+                efectivo: 0,
+                nequi: 0,
+                totalAcumulado: baseInicial
             };
 
             filas.forEach(fila => {
@@ -135,13 +140,12 @@ router.get("/resumen-turno/:turnoId", (req, res) => {
                     } else if (pago.includes('nequi')) {
                         resumen.nequi += monto;
                     }
-                } 
-                else if (tipo.includes('insu')) {
+                } else if (tipo.includes('insu')) {
                     resumen.insumos += monto;
-                    resumen.totalAcumulado -= monto; // Los insumos restan a la caja (gasto)
+                    resumen.totalAcumulado -= monto;
                 } else if (tipo.includes('equi')) {
                     resumen.equipos += monto;
-                    resumen.totalAcumulado -= monto; // Los equipos restan a la caja (gasto)
+                    resumen.totalAcumulado -= monto;
                 }
             });
 
@@ -193,7 +197,7 @@ router.get("/balance-turno/:turnoId", (req, res) => {
 
             const totalVentas = ventas.reduce((acc, v) => acc + (v.subtotal || 0), 0);
             const totalGastos = gastos.reduce((acc, g) => acc + (g.monto || 0), 0);
-            
+
             res.json({
                 ventas,
                 gastos,
