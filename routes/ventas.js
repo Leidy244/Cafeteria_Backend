@@ -6,99 +6,104 @@ const db = require("../db/database");
    1. REGISTRAR VENTA, INSUMO O EQUIPO (POST /ventas)
    ========================================================================== */
 router.post("/", (req, res) => {
-    const { carrito, total, mesa, metodoPago, turnoId, tipo } = req.body;
-    const pagoNormalizado = metodoPago ? metodoPago.toLowerCase().trim() : "efectivo";
-    const tipoFinal = tipo || "venta";
-
-    db.run(
-        `INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-        [total, mesa || "N/A", pagoNormalizado, "pagado", new Date().toISOString(), turnoId || null, tipoFinal],
-        function (err) {
-            if (err) return res.status(500).json({ error: err.message });
-
-            const ventaId = this.lastID;
-
-            if (!carrito || carrito.length === 0) {
-                return res.json({ mensaje: `${tipoFinal} registrado ✅`, ventaId });
-            }
-
-            const productosVendidos = {};
-            carrito.forEach(item => {
-                const id = item.id;
-                const cantidadReal = Number(item.cantidad) || 1;
-                if (!productosVendidos[id]) {
-                    productosVendidos[id] = { ...item, cantidadAcumulada: 0 };
+    const { carrito, total, mesa, metodoPago, turnoId, montoRecibido } = req.body;
+    
+    // Iniciar transacción
+    db.serialize(() => {
+        db.run("BEGIN TRANSACTION");
+        
+        // 1. Insertar la venta principal
+        db.run(
+            `INSERT INTO ventas (carrito, total, mesa, metodoPago, turnoId, montoRecibido, fecha, tipo) 
+             VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 'venta')`,
+            [JSON.stringify(carrito), total, mesa, metodoPago, turnoId, montoRecibido],
+            function(err) {
+                if (err) {
+                    db.run("ROLLBACK");
+                    return res.status(500).json({ error: err.message });
                 }
-                productosVendidos[id].cantidadAcumulada += cantidadReal;
-            });
-
-            const itemsUnicos = Object.values(productosVendidos);
-            let completados = 0;
-
-            itemsUnicos.forEach(prod => {
-                // A. Insertar detalle de venta
-                db.run(
-                    `INSERT INTO detalle_ventas (venta_id, producto_id, nombre, precioIngreso, precioVenta, cantidad) 
-                     VALUES (?, ?, ?, ?, ?, ?)`,
-                    [ventaId, prod.id, prod.nombre, prod.precioIngreso, prod.precioVenta, prod.cantidadAcumulada],
-                    (errDetalle) => {
-                        if (errDetalle) console.error("❌ Error detalle:", errDetalle.message);
-
-                        // B. Descuento stock normal (nunca baja de 0)
-                        db.run(
-                            `UPDATE productos SET cantidad = MAX(0, cantidad - ?) WHERE id = ?`,
-                            [prod.cantidadAcumulada, prod.id]
-                        );
-
-                        // C. ✨ LÓGICA DE PULPAS: verificar stock antes de descontar
-                        const tieneVinculo = prod.subTipo &&
-                            prod.subTipo !== 'general' &&
-                            prod.subTipo !== 'pulpa';
-
-                        if (tieneVinculo) {
-                            console.log(`🍓 SubTipo detectado: ${prod.subTipo}. Verificando stock...`);
-
-                            db.get(
-                                `SELECT cantidad FROM productos 
-                                 WHERE subTipo = 'pulpa' AND LOWER(nombre) LIKE LOWER(?)`,
-                                [`%${prod.subTipo}%`],
-                                function (errCheck, pulpa) {
-                                    if (errCheck) console.error("❌ Error check pulpa:", errCheck.message);
-
-                                    if (!pulpa || pulpa.cantidad <= 0) {
-                                        console.warn(`⚠️ Sin stock de pulpa para: ${prod.subTipo}`);
-                                    } else {
-                                        db.run(
-                                            `UPDATE productos 
-                                             SET cantidad = MAX(0, cantidad - ?)
-                                             WHERE subTipo = 'pulpa' 
-                                             AND LOWER(nombre) LIKE LOWER(?)
-                                             AND cantidad > 0`,
-                                            [prod.cantidadAcumulada, `%${prod.subTipo}%`],
-                                            function (errPulpa) {
-                                                if (errPulpa) console.error("❌ Error pulpa:", errPulpa.message);
-                                                if (this.changes > 0) {
-                                                    console.log(`✅ Pulpa ${prod.subTipo} descontada (x${prod.cantidadAcumulada}).`);
-                                                }
-                                            }
-                                        );
-                                    }
-                                }
-                            );
-                        }
-
-                        completados++;
-                        if (completados === itemsUnicos.length) {
-                            if (mesa && mesa !== "N/A") {
-                                db.run(`DELETE FROM pedidos WHERE mesa = ?`, [mesa]);
+                
+                const ventaId = this.lastID;
+                
+                // 2. Insertar cada producto en detalle_ventas Y descontar stock
+                let errores = false;
+                let procesosPendientes = carrito.length;
+                
+                if (procesosPendientes === 0) {
+                    db.run("COMMIT");
+                    return res.json({ id: ventaId, mensaje: "Venta registrada ✅" });
+                }
+                
+                carrito.forEach(item => {
+                    // 2a. Insertar en detalle_ventas
+                    db.run(
+                        `INSERT INTO detalle_ventas (venta_id, producto_id, nombre, cantidad, precioVenta, subtotal)
+                         VALUES (?, ?, ?, ?, ?, ?)`,
+                        [ventaId, item.id, item.nombre, item.cantidad, item.precioVenta, item.precioVenta * item.cantidad],
+                        function(err) {
+                            if (err) {
+                                errores = true;
+                                console.error("Error al insertar detalle:", err);
                             }
-                            return res.json({ mensaje: "Venta e inventario de pulpas sincronizados ✅", ventaId });
                         }
+                    );
+                    
+                    // 2b. Descontar stock del producto principal
+                    db.run(
+                        `UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`,
+                        [item.cantidad, item.id],
+                        function(err) {
+                            if (err) {
+                                errores = true;
+                                console.error("Error al descontar producto:", err);
+                            }
+                            
+                            // 2c. Descontar stock de pulpa si aplica
+                            const tieneVinculo = item.subTipo &&
+                                item.subTipo !== 'general' &&
+                                item.subTipo !== 'pulpa';
+                            
+                            if (tieneVinculo && !errores) {
+                                db.run(
+                                    `UPDATE productos 
+                                     SET cantidad = MAX(0, cantidad - ?)
+                                     WHERE subTipo = 'pulpa' 
+                                     AND LOWER(nombre) LIKE LOWER(?)`,
+                                    [item.cantidad, `%${item.subTipo}%`],
+                                    function(errPulpa) {
+                                        if (errPulpa) {
+                                            errores = true;
+                                            console.error("Error al descontar pulpa:", errPulpa);
+                                        }
+                                        procesosPendientes--;
+                                        if (procesosPendientes === 0) finalizar();
+                                    }
+                                );
+                            } else {
+                                procesosPendientes--;
+                                if (procesosPendientes === 0) finalizar();
+                            }
+                        }
+                    );
+                });
+                
+                function finalizar() {
+                    if (errores) {
+                        db.run("ROLLBACK");
+                        res.status(500).json({ error: "Error al descontar stock o guardar detalle" });
+                    } else {
+                        db.run("COMMIT");
+                        res.json({ 
+                            id: ventaId, 
+                            mensaje: "Venta registrada y stock actualizado ✅",
+                            total,
+                            metodoPago
+                        });
                     }
-                );
-            });
-        }
-    );
+                }
+            }
+        );
+    });
 });
 
 /* ==========================================================================
@@ -134,16 +139,16 @@ router.get("/resumen-turno/:turnoId", (req, res) => {
 
                 if (tipo === 'venta' || tipo === 'producto' || tipo === 'productos') {
                     resumen.productos += monto;
-                    if (pago.includes('efectivo')) {
+                    if (pago === 'efectivo') {
                         resumen.efectivo += monto;
                         resumen.totalAcumulado += monto;
-                    } else if (pago.includes('nequi')) {
+                    } else if (pago === 'nequi') {
                         resumen.nequi += monto;
                     }
-                } else if (tipo.includes('insu')) {
+                } else if (tipo.includes('insumo')) {
                     resumen.insumos += monto;
                     resumen.totalAcumulado -= monto;
-                } else if (tipo.includes('equi')) {
+                } else if (tipo.includes('equipo')) {
                     resumen.equipos += monto;
                     resumen.totalAcumulado -= monto;
                 }
@@ -160,11 +165,12 @@ router.get("/resumen-turno/:turnoId", (req, res) => {
 router.get("/detalle-productos/:turnoId", (req, res) => {
     const { turnoId } = req.params;
     const sql = `
-        SELECT dv.nombre, SUM(dv.cantidad) as cantidadTotal, v.metodoPago
+        SELECT dv.nombre, SUM(dv.cantidad) as cantidadTotal, v.metodoPago, SUM(dv.subtotal) as total
         FROM detalle_ventas dv
         JOIN ventas v ON dv.venta_id = v.id 
-        WHERE v.turnoId = ?
+        WHERE v.turnoId = ? AND v.tipo = 'venta'
         GROUP BY dv.nombre, v.metodoPago
+        ORDER BY cantidadTotal DESC
     `;
     db.all(sql, [turnoId], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -179,15 +185,18 @@ router.get("/balance-turno/:turnoId", (req, res) => {
     const { turnoId } = req.params;
 
     const sqlVentas = `
-        SELECT nombre, SUM(cantidad) as cant, SUM(precioVenta * cantidad) as subtotal 
-        FROM detalle_ventas 
-        WHERE venta_id IN (SELECT id FROM ventas WHERE turnoId = ? AND tipo = 'venta')
-        GROUP BY nombre`;
+        SELECT nombre, SUM(cantidad) as cantidad, SUM(subtotal) as total
+        FROM detalle_ventas dv
+        JOIN ventas v ON dv.venta_id = v.id
+        WHERE v.turnoId = ? AND v.tipo = 'venta'
+        GROUP BY nombre
+        ORDER BY total DESC`;
 
     const sqlGastos = `
-        SELECT total as monto, mesa as nombre, tipo 
+        SELECT total as monto, mesa as nombre, tipo, metodoPago, fecha
         FROM ventas 
-        WHERE turnoId = ? AND (tipo = 'insumo' OR tipo = 'equipo')`;
+        WHERE turnoId = ? AND (tipo = 'insumo' OR tipo = 'equipo')
+        ORDER BY fecha DESC`;
 
     db.all(sqlVentas, [turnoId], (err, ventas) => {
         if (err) return res.status(500).json({ error: err.message });
@@ -195,7 +204,7 @@ router.get("/balance-turno/:turnoId", (req, res) => {
         db.all(sqlGastos, [turnoId], (errG, gastos) => {
             if (errG) return res.status(500).json({ error: errG.message });
 
-            const totalVentas = ventas.reduce((acc, v) => acc + (v.subtotal || 0), 0);
+            const totalVentas = ventas.reduce((acc, v) => acc + (v.total || 0), 0);
             const totalGastos = gastos.reduce((acc, g) => acc + (g.monto || 0), 0);
 
             res.json({

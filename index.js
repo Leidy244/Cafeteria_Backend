@@ -38,4 +38,5 @@ app.post("/login", (req, res) => {
 
 app.listen(3001, () => {
   console.log("Servidor corriendo en http://localhost:3001");
+  app.use(express.static(path.join(__dirname, 'public')));
 });
