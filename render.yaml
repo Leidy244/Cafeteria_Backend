@@ -1,0 +1,23 @@
+cd ~/OneDrive/Documents/Cafeteria
+
+# Crear/editar render.yaml con SOLO el backend
+cat > render.yaml << 'EOF'
+services:
+  - type: web
+    name: cafeteria-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node index.js
+    rootDir: ./backend_Cafeteria
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_PATH
+        value: ./data/cafeteria.db
+EOF
+
+git add render.yaml
+git commit -m "Despliega solo el backend"
+git push origin main
