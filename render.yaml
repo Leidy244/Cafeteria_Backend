@@ -1,7 +1,3 @@
-cd ~/OneDrive/Documents/Cafeteria
-
-# Crear/editar render.yaml con SOLO el backend
-cat > render.yaml << 'EOF'
 services:
   - type: web
     name: cafeteria-backend
@@ -16,8 +12,3 @@ services:
         value: 10000
       - key: DB_PATH
         value: ./data/cafeteria.db
-EOF
-
-git add render.yaml
-git commit -m "Despliega solo el backend"
-git push origin main
