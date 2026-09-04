@@ -1,12 +1,7 @@
-const fs = require("fs");
-const path = require("path");
-const { db } = require("./helpers");
+const { run } = require("./helpers");
 
-const dbDir = path.dirname(require("../config").dbPath);
-if (dbDir && dbDir !== ".") fs.mkdirSync(dbDir, { recursive: true });
-
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS productos (
+const initDatabase = async () => {
+  await run(`CREATE TABLE IF NOT EXISTS productos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT,
     precioIngreso REAL,
@@ -18,7 +13,7 @@ db.serialize(() => {
     subTipo TEXT DEFAULT 'general'
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS ventas (
+  await run(`CREATE TABLE IF NOT EXISTS ventas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     carrito TEXT,
     total REAL NOT NULL,
@@ -31,7 +26,7 @@ db.serialize(() => {
     tipo TEXT DEFAULT 'venta'
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS detalle_ventas (
+  await run(`CREATE TABLE IF NOT EXISTS detalle_ventas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     venta_id INTEGER,
     producto_id INTEGER,
@@ -43,7 +38,7 @@ db.serialize(() => {
     FOREIGN KEY(venta_id) REFERENCES ventas(id)
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS caja (
+  await run(`CREATE TABLE IF NOT EXISTS caja (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     montoInicial REAL DEFAULT 0,
     montoEfectivo REAL DEFAULT 0,
@@ -56,7 +51,7 @@ db.serialize(() => {
     estado TEXT DEFAULT 'cerrado'
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS pedidos (
+  await run(`CREATE TABLE IF NOT EXISTS pedidos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     mesa TEXT,
     total REAL,
@@ -66,7 +61,7 @@ db.serialize(() => {
     fecha_pago TEXT
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+  await run(`CREATE TABLE IF NOT EXISTS usuarios (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre TEXT NOT NULL,
     correo TEXT UNIQUE NOT NULL,
@@ -76,14 +71,13 @@ db.serialize(() => {
     fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP
   )`);
 
-  // Indexes for performance
-  db.run(`CREATE INDEX IF NOT EXISTS idx_ventas_turno ON ventas(turnoId)`);
-  db.run(`CREATE INDEX IF NOT EXISTS idx_ventas_tipo ON ventas(tipo)`);
-  db.run(`CREATE INDEX IF NOT EXISTS idx_detalle_venta ON detalle_ventas(venta_id)`);
-  db.run(`CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos(estado)`);
-  db.run(`CREATE INDEX IF NOT EXISTS idx_usuarios_correo ON usuarios(correo)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_ventas_turno ON ventas(turnoId)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_ventas_tipo ON ventas(tipo)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_detalle_venta ON detalle_ventas(venta_id)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos(estado)`);
+  await run(`CREATE INDEX IF NOT EXISTS idx_usuarios_correo ON usuarios(correo)`);
 
   console.log("  Base de datos inicializada con índices");
-});
+};
 
-module.exports = db;
+module.exports = { initDatabase };

@@ -1,6 +1,7 @@
 const config = require("./config");
 const app = require("./app");
 const { db } = require("./db/helpers");
+const { initDatabase } = require("./db/database");
 const { seedUsers } = require("./services/user.service");
 
 const server = app.listen(config.port, async () => {
@@ -9,6 +10,7 @@ const server = app.listen(config.port, async () => {
   console.log(`  Entorno: ${config.nodeEnv}\n`);
 
   try {
+    await initDatabase();
     await seedUsers();
     console.log("  Usuarios inicializados correctamente\n");
   } catch (err) {
