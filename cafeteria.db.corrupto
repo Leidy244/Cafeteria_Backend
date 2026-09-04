@@ -1,0 +1,812 @@
+SQLite format 3   @    ê                                                              ê .‘à
+ € ê˜
+6_
+†	!€                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ƒ†tablecajacaja	CREATE TABLE caja (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        montoInicial REAL DEFAULT 0,
+        montoEfectivo REAL DEFAULT 0,
+        montoNequi REAL DEFAULT 0,
+        totalGastosEfectivo REAL DEFAULT 0,
+        totalGastosNequi REAL DEFAULT 0,
+        montoFinal REAL DEFAULT 0,
+        fechaApertura TEXT,
+        fechaCierre TEXT,
+        estado TEXT DEFAULT 'cerrado'
+    )‚b))„tabledetalle_ventasdetalle_ventasCREATE TABLE detalle_ventas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        venta_id INTEGER, 
+        producto_id INTEGER,
+        nombre TEXT,
+        precioIngreso REAL,
+        precioVenta REAL,
+        cantidad INTEGER,
+        subtotal REAL,
+        FOREIGN KEY(venta_id) REFERENCES ventas(id)
+    )ƒ…gtableventasventasCREATE TABLE ventas (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        carrito TEXT,
+        total REAL NOT NULL,
+        mesa TEXT DEFAULT 'N/A',
+        metodoPago TEXT NOT NULL,
+        montoRecibido REAL DEFAULT 0,
+        estado TEXT DEFAULT 'pagado',
+        fecha TEXT NOT NULL,
+        turnoId INTEGER NOT NULL, 
+        tipo TEXT DEFAULT 'venta'
+    )‚$„tablepedidospedidosCREATE TABLE pedidos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    mesa TEXT,
+    total REAL,
+    carrito TEXT,                    -- â† ESTE CAMPO ES IMPORTANTE
+    estado TEXT DEFAULT 'pendiente',
+    fecha TEXT DEFAULT CURRENT_TIMESTAMP,
+    fecha_pago TEXT
+)‚&„tableusuariosusuariosCREATE TABLE usuarios (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT NOT NULL,
+    correo TEXT UNIQUE NOT NULL,
+    contrasena TEXT NOT NULL,
+    rol TEXT DEFAULT 'admin',
+    activo INTEGER DEFAULT 1,
+    fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP
+)/C indexsqlite_autoindex_usuarios_1usuarios       P++Ytablesqlite_sequencesqlite_sequenceCREATE TABLE sqlite_sequence(name,seq)‚ƒutableproductosproductosCREATE TABLE productos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT,
+    precioIngreso REAL,
+    precioVenta REAL,
+    cantidad INTEGER,
+    descripcion TEXT,
+    imagen TEXT,
+    tipo TEXT, 
+    subTipo TEXT DEFAULT 'general' 
+)   û    
+ûÞðÀŒ
+ø-
+Ã
+‘eJ
+j
+6
+Û±ƒRèºŒb2
+ø
+Ç
+¢
+v
+F
+	ç	·	@	n	à²{L	!ûÒ«ƒZ5Ü¤q?Í”\&ï»ŒY'úÂPì´|>Î™k- õ ±         BW
+ I	! iluminacion sobre meson lineal
+» 2026-06-02equipogeneral6V
+ 1	! sistema de camaras'¬@2026-06-02equipogeneral<U
+ ;! parasoles con 12 sillas0Ô 2026-06-02equipogeneral,T
+ ! sillas J 
+2026-06-02equipogeneral3S
+ +	! mesas internas ~@2026-06-02equipogeneral7R
+ 3	! Salpicadero granitoj 2026-06-02equipogeneral5Q
+ -! Meson en granitoc. 2026-06-02equipogeneral<P
+ =	! Mueble exhibidor madera 0Ô 2026-06-02equipogeneral6O
+ 1	! mueble alto madera	ë2026-06-02equipogeneral6N
+ 1	! mueble bajo madera8u 2026-06-02equipogeneral/M
+ #	! Bose musica\À2026-06-02equipogeneral1L
+ '	! televisor led\À2026-06-02equipogeneral7J
+ 3	! Refrigerador tortas[€2026-06-02equipogeneral\ 3K
+ +	! maquina wafleraÐ2026-06-02equipogeneral6H
+ 1	! refrigerador hacebÖ 2026-06-02equipogeneral+G
+ 	! Teclado ê`2026-06-02equipogeneral0F
+ %	! Registradora[`2026-06-02equipogeneral1E
+ '	! Computador HPw@2026-06-02equipogeneral-D
+ 	! Nevera GEw@2026-06-02equipogeneral2C
+ )	! Cafetera oster Îp2026-06-02equipogeneral5B
+ /	! Microondas KalleyW02026-06-02equipogeneral4A
+ -	! Congelador hacebÖ 2026-06-02equipogeneral6@
+ 1	! Maquina para hielo“à2026-06-02equipogeneral7?
+ 9
+ )Jugo de mora en leche X#(ventapulpa de mora 6>
+ 7
+ )Jugo de mora en agua ˆXventapulpa de mora 8=
+ ;
+ )Jugo de mango en leche #(#(ventapulpa de mango0<
+ )! pulpa de mora 	Ä2026-05-31insumopulpa1;
+ +! pupa de chamba ¸2026-05-31insumopulpa6:
+ 5! pulpa de guanÃ¡bana 	Ä"2026-05-31insumopulpa09
+ )! pulpa de lulo 	Ä2026-05-31insumopulpa%8
+ !
+ Canada DryÐ ventageneral#7
+ 
+ Cocacola	Ä
+¬	ventageneral'6
+ %
+ Agua grande ÜÐventageneral&5
+ #
+ Club trigo Ð”ventageneral%4
+ !
+ Club roja Ð”ventageneral'3
+ %
+ Club dorada Ð”ventageneral$2
+ 
+ Coronita ¸”ventageneral)1
+ )
+ Agua pequeÃ±a  è'ventageneral-/
+ /
+ Limonada natural ¸X'ventageneral5.
+ ?
+ Limonada de hierba buena X#('ventageneral,-
+ -
+ Limonada de cocoX#('ventageneral.,
+ 1
+ Limonada cerezada X#('ventageneral.+
+ 1
+ Malteada pequeÃ±a '.à'ventageneral,)
+ -
+ Malteada grande *ø:˜'ventageneral *
+ 
+ MiloˆX'ventageneral$0
+ 
+ BretaÃ±a ˜ ventagenerall.(
+ 1
+ Cono tres bolitas @%'ventageneral.'
+ 1
+ Cono de dos bolas |d'ventageneral-&
+ -
+ Cono de una bola¸
+¬†Ÿventageneral.%
+ 3
+ Brownie con helado @*øventaBrownie *$
+ ! Brownie ˆ
+2026-05-31insumopulpa##
+ 
+ Brownie ˆXventaBrownie /"
+ 3
+ Waffles con helado #(2È'ventageneral8!
+ G
+ Torta de naranja con amapola p@ventageneral. 
+ 3
+ Torta de chocolate p@ventageneral(
+ '
+ Pan de bonos 
+ð
+¬ventageneral,
+ /
+ Galletas de mani ¸ventageneral,
+ /
+ Galletas de coco ¸ventageneral,
+ /
+ Galletas de avena¸ventageneral:
+ K
+ Galletas de chips de chocolate Ð¸ventageneral/
+ 5
+ Postre de maracuyÃ¡ p@ventageneral,
+ /
+ Postre de limÃ³n p@ventageneral(
+ '
+ Vino caliente@2È
+ventageneral&
+ 
+ Canelazo ˆ@†žventageneral1
+ 5
+ AromÃ¡tica de frutas¸
+¬†žventageneral2
+ 7
+ Aromatica de hierbas Ð¸†Ÿventageneral%
+ 
+ Campesino¸ 'ventageneral0
+ )! pulpa de mango	Ä22026-05-30insumopulpa3
+ 1
+ )Granizado de mango|*øventapulpa de mango3
+ 3
+ %jugo gulupa en aguaˆXcventapulpa gulupa-
+ %! pulpa gulupaˆ2026-05-30insumopulpa@ 	3
+%
+ 
+ EspressoÐ	Ä†Ÿventageneral2
+ ;
+ jugo guanÃ¡bana en aguaˆXdventageneral.
+ 3
+ jugo chamba en aguaˆ#(cventageneral)
+ )
+ jugo lulo agua Xbventageneral#
+ 
+ tintoÐ¸ ˜–|ventageneral   
+)! &
+ 
+ Americano	Ä¸†Ÿventageneral.	
+ ! Licuadora
+» 2026-05-30equipogeneralpa7
+ 9
+ )Jugo de mango en agua ˆXventapulpa de mangoa 
+
+ 
+ latte
+¬ˆbventage   P
+» …ò±…•¢Ý                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 productos ’pedidos%ventas §scaja
+   "detalle_ventas   #	pedidos
+)detalle_ventas £usuarios
+   x ¸x                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            > -	3Cajerocaja@juyasia.comcaja123cajero2026-05-30 19:33:43F '/	3Administradoradmin@juyasia.comadmin123admin2026-05-30 19:33:43
+   Ö ëÖ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          -caja@juyasia.com/	admin@juyasia.com   ñ    ûöñUŠ ß                                                                                                                                                                                                       …(	 Š3 2q$[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":8,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pendiente2026-06-06 16:37:26E	 ‚M3 1L,[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:35:11:11†-	 Œ3 4Sü[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pendiente2026-06-06 16:30:36„'	 ˆ3 1HD[{"id":14,"nombre":"jugo gulupa en agua","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa gulupa","isVirtual":true,"tieneVinculo":true},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":23,"nombre":"Canelazo ","precioIngreso":5000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-31 22:29:37†R	 Œg3 1y[{"id":12,"nombre":"jugo chamba en agua","precioIngreso":5000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-30 22:11:09ƒ	 …M3 32È[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true}]pagado2026-05-30 20:03:207	 ‚13 1:˜[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-30 19:59:447	 ‚13 1p[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026            
+Ê    ûöñìçâÜÖÐÊô]õ©Wÿ¬Z                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          P  9=	 ÃPCOMPRA: pulpa de mora efectivopagado2026-05-31T16:42:07.148ZinsumoQ  ;=	 ê`COMPRA: pupa de chamba efectivopagado2026-05-31T16:40:29.845ZinsumoV  E=	LCOMPRA: pulpa de guanÃ¡bana efectivopagado2026-05-31T16:40:01.279ZinsumoP  9=	 ¦COMPRA: pulpa de lulo efectivopagado2026-05-31T16:38:59.848ZinsumoJ  -=	 ÃPCOMPRA: Brownie efectivopagado2026-05-31T16:02:56.162Zinsumo†e Œg3	[{"id":12,"nombre":"jugo chamba en agua","precioIngreso":5000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]y1efectivo ÃPpagado2026-05-30 22:11:45ventaƒ …M3	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true}]2È3nequi2Èpagado2026-05-30 21:22:32ventaP
+  9=	 ÃPCOMPRA: pulpa de mangoefectivopagado2026-05-30T21:11:23.817ZinsumoM  5=	ˆCOMPRA: pulpa gulupaefectivopagado2026-05-30T20:37:54.574ZinsumoI ‚13	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]:˜1efectivoN pagado2026-05-30 20:01:19ventaK
+  /=	w@COMPRA: Licuadoraefectivopagado2026-05-30T19:58:56.804ZequipoO	  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:56:12.575ZinsumoO  9=	:˜COMPRA: pulpa de mangoefectivopagado2026-05-30T19:54:42.373ZinsumoO  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:52:29.215ZinsumoO  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:50:56.488ZinsumoO  9=	u0COMPRA: Pulpa de mangoefectivopagado2026-05-30T19:48:46.549Zinsumo‚ ƒ-
+3	[{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Pulpa de mango ","isVirtual":true,"tieneVinculo":true}]m`efectivou0pagado2026-05-30 19:37:17ventaƒ …O
+3	[{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Pulpa de mango ","isVirtual":true,"tieneVinculo":true},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":8,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]ÐnequiÐpagado2026-05-30 19:37:02ventaM  ;=	u0COMPRA: Pulpa de mango nequipagado2026-05-30T19:36:07.393ZinsumoI ‚13	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":   &            {   o   f   ^   7   
+   û    û„nX1
+÷Ð±œu_@
+÷
+Ý
+¹
+”
+c
+A
+%
+êË¥Šf6óØ¶¡ƒnY;
+ù
+×
+Á
+¥
+„
+o
+Q
+0
+	ö	×	³	Ž	q	W	7	øÊŸxU3íØ½š„bG"ôÑ¬—uS1ìÊ©…aL'Õ³’nK$çÀxS.èÒ®‰eE'öÚÄž|P9                                   "u	 1 	 'Cono de dos bolas ddt	 	  Žtinto¸p*s	 =   ‰Jugo de chamba en leche #(FP r	 - 	 Œ&Cono de una bola
+¬
+¬$q	 5 	 ŒAromÃ¡tica de frutas
+¬
+¬p	 	 	 Œtinto¸¸o	  	 ‹ PataconesLL/n	 K 	 ŠGalletas de chips de chocolate ¸¸m	 % 	 Š6Agua grande ÐÐl	 ) 	 Š1Agua pequeÃ±a èè"k	 1 	 ˆ+Malteada pequeÃ±a .à.à#j	 3 	 ‡%Brownie con helado *ø*ø"i	 1 	 ‡(Cono tres bolitas %%h	 	 	 †tinto¸¸"g	 1 	 …'Cono de dos bolas dd f	 - 	 „&Cono de una bola
+¬
+¬#e	 1  „'Cono de dos bolas d2È#d	 1  ƒ'Cono de dos bolas d2È#c	 3 	 ƒ Torta de chocolate @@!b	 -  ‚&Cono de una bola
+¬X%a	 7 	 Aromatica de hierbas ¸¸%`	 5  AromÃ¡tica de frutas
+¬X_	 	 	 tinto¸¸%^	 7 	 €Aromatica de hierbas ¸¸!]	 -  €&Cono de una bola
+¬6°"\	 3 	 Torta de chocolate @@[	 - 	&Cono de una bola
+¬
+¬ Z	 / 	Galletas de avena¸¸/Y	 K ~Galletas de chips de chocolate ¸pX	 - 	}&Cono de una bola
+¬
+¬#W	 5 	}AromÃ¡tica de frutas
+¬
+¬V	 	 	}tinto¸¸"U	 1 }'Cono de dos bolas d2È"T	 3 	| Torta de chocolate @@S	 - 	|&Cono de una bola
+¬
+¬ R	 / 	|Galletas de avena¸¸"Q	 3 	{%Brownie con helado *ø*øP	 - 	{&Cono de una bola
+¬
+¬ O	 - z&Cono de una bola
+¬D\ N	 - y&Cono de una bola
+¬D\ M	 - x&Cono de una bola
+¬XL	 	 	wtinto¸¸#K	 5 	wPostre de maracuyÃ¡ @@!J	 / wPostre de limÃ³n @]À,I	 G 	v!Torta de naranja con amapola @@#H	 5 	uPostre de maracuyÃ¡ @@G	  uCampesino N  F	 - t&Cono de una bola
+¬XE	 	 ttinto¸p!D	 1 	s'Cono de dos bolas ddC	  sCampesino N B	 	 	qtinto¸¸ A	 - q&Cono de una bola
+¬X"@	 3 	q Torta de chocolate @@ ?	 - p&Cono de una bola
+¬X!>	 1 	o'Cono de dos bolas dd%=	 7 	n ŠJugo de lulo en leche#(#()<	 = n ‰Jugo de chamba en leche #(FP,;	 G 	m!Torta de naranja con amapola @@:	 ! 	m8Canada Dry  "9	 3 	mjugo chamba en agua#(#(8	 ) mjugo lulo aguaXR7	  m7Cocacola
+¬X6	 % 	m6Agua grande ÐÐ#5	 1 m'Cono de dos bolas d ±¼"4	 3 	l Torta de chocolate @@3	 ' 	l ˆTorta de cafe@@2	 	 ltinto¸p"1	 1 k'Cono de dos bolas d2È0	 - 	j&Cono de una bola
+¬
+¬/	 ' 	iPan de bonos 
+¬
+¬.	 	 	itinto¸¸-	 - 	h&Cono de una bola
+¬
+¬,	 ! g4Club roja ”#(+	 	 gtinto¸p *	 - g&Cono de una bola
+¬D\)	 % g3Club dorada ”ix"(	 1 f'Cono de dos bolas d2È'	 ' 	ePan de bonos 
+¬
+¬&	 	 	etinto¸¸%	 	 	dtinto¸¸$	 ' 	dPan de bonos 
+¬
+¬#	 	 	btinto¸¸ "	 - b&Cono de una bola
+¬X!	  a2Coronita ”ix 	 - 	a&Cono de una bola
+¬
+¬ 	 / 	aGalletas de mani ¸¸.	 K 	aGalletas de chips de chocolate ¸¸"	 1 a'Cono de dos bolas d2È	  `Campesino @$	 7 	`Aromatica de hierbas ¸¸	 ) 	`1Agua pequeÃ±a èè#	 5 	`AromÃ¡tica de frutas
+¬
+¬	 	 `tinto¸p	  _2Coronita ” Œ  	 - _&Cono de una bola
+¬X/	 K _Galletas de chips de chocolate ¸p#	 1 _'Cono de dos bolas d ±¼"	 1 ^'Cono de dos bolas dL,	  	Canelazo @@#	 5 	AromÃ¡tica de frutas
+¬
+¬"	 3 	jugo gulupa en aguaXX	 ) 	jugo lulo aguaXX	  	
+latteˆˆ%
+	 9 	Jugo de mango en agua XX	 	 	tinto¸¸	 ) 	jugo lulo aguaXX%
+	 9 	Jugo de mango en agua XX		  	
+latteˆˆ"	 3 	jugo chamba en agua#(#(%	 9 	Jugo de mango en agua XX	 	 tinto¸p	 	 tinto¸:˜&	 9 Jugo de mango en agua Xm`	 	 tinto¸]À'	 9 Jugo de mango en agua X ¤	 		 tinto   u
+   
+‹ ¸t0ì¨a
+Ö
+
+Hþº‹                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         -
+ = ‘€2026-07-05T14:27:29.848ZabiertoB ==2026-07-05T14:26:43.503Z2026-07-05T14:26:50.139ZcerradoH ==}F;2026-06-15T23:47:40.305Z2026-07-05T14:26:43.473ZcerradoE
+ ==æ2026-06-15T15:33:58.316Z2026-06-15T23:46:54.403ZcerradoE	 ==æ2026-06-15T14:38:58.723Z2026-06-15T15:33:43.021ZcerradoE ==1Æ2026-06-15T14:36:45.162Z2026-06-15T14:38:50.957ZcerradoB ==2026-06-15T14:36:15.120Z2026-06-15T14:36:17.175ZcerradoE ==vÔ2026-06-06T16:52:48.575Z2026-06-15T14:36:14.941ZcerradoB ==2026-06-06T15:23:00.754Z2026-06-06T16:52:20.740ZcerradoB ==2026-06-06T15:20:43.239Z2026-06-06T15:22:15.296ZcerradoB ==2026-06-05T21:51:40.533Z2026-06-05T22:36:08.362ZcerradoB ==2026-06-02T23:18:19.746Z2026-06-02T23:18:22.525ZcerradoF ==N u02026-05-30T19:34:09.597Z2026-06-02T23:18:19.727Zcerrado
+   Z 4å
+LCò¡P
+ÿ
+®
+a	•	Fô]õ©Wÿ¬Z                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          P  9=	 ÃPCOMPRA: pulpa de mora efectivopagado2026-05-31T16:42:07.148ZinsumoQ  ;=	 ê`COMPRA: pupa de chamba efectivopagado2026-05-31T16:40:29.845ZinsumoV  E=	LCOMPRA: pulpa de guanÃ¡bana efectivopagado2026-05-31T16:40:01.279ZinsumoP  9=	 ¦COMPRA: pulpa de lulo efectivopagado2026-05-31T16:38:59.848ZinsumoJ  -=	 ÃPCOMPRA: Brownie efectivopagado2026-05-31T16:02:56.162Zinsumo†e Œg3	[{"id":12,"nombre":"jugo chamba en agua","precioIngreso":5000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]y1efectivo ÃPpagado2026-05-30 22:11:45ventaƒ …M3	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true}]2È3nequi2Èpagado2026-05-30 21:22:32ventaP
+  9=	 ÃPCOMPRA: pulpa de mangoefectivopagado2026-05-30T21:11:23.817ZinsumoM  5=	ˆCOMPRA: pulpa gulupaefectivopagado2026-05-30T20:37:54.574ZinsumoI ‚13	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]:˜1efectivoN pagado2026-05-30 20:01:19ventaK
+  /=	w@COMPRA: Licuadoraefectivopagado2026-05-30T19:58:56.804ZequipoO	  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:56:12.575ZinsumoO  9=	:˜COMPRA: pulpa de mangoefectivopagado2026-05-30T19:54:42.373ZinsumoO  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:52:29.215ZinsumoO  9=	u0COMPRA: pulpa de mangoefectivopagado2026-05-30T19:50:56.488ZinsumoO  9=	u0COMPRA: Pulpa de mangoefectivopagado2026-05-30T19:48:46.549Zinsumo‚ ƒ-
+3	[{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Pulpa de mango ","isVirtual":true,"tieneVinculo":true}]m`efectivou0pagado2026-05-30 19:37:17ventaƒ …O
+3	[{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Pulpa de mango ","isVirtual":true,"tieneVinculo":true},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":8,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]ÐnequiÐpagado2026-05-30 19:37:02ventaM  ;=	u0COMPRA: Pulpa de mango nequipagado2026-05-30T19:36:07.393ZinsumoI ‚13	[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]p1efectivo'pagado2026-05-30 19:35:15venta
+   # – 
+Ë9
+å
+
+>	ñ	 	P	¯X®]¸b±Z¼a©Bèˆ6ç—E ò –                                                                        Z7  M=	—€COMPRA: vaso de 10 onz acanaladoefectivopagado2026-06-02T22:16:26.664ZequipoQ6  ;=	<hCOMPRA: vasos de 10 onzefectivopagado2026-06-02T22:15:40.512ZequipoP5  9=	O€COMPRA: vasos de 12onzefectivopagado2026-06-02T22:14:23.745ZequipoN4  5=	L COMPRA: Vasos 16 onzefectivopagado2026-06-02T22:13:51.423ZequipoM3  1=	O±€COMPRA: Obra civilefectivopagado2026-06-02T22:09:21.239ZequipoP2  9=	 ê`COMPRA: Iluminacion wcefectivopagado2026-06-02T22:07:04.158Zequipo^1  U=	S COMPRA: iluminacion exterior apliqueefectivopagado2026-06-02T22:05:49.552ZequipoX0  I=	â COMPRA: iluminacion de apliqueefectivopagado2026-06-02T22:04:57.245Zequipoe/  c=	Á0COMPRA: IluminaciÃ³n sobre meson atencion  efectivopagado2026-06-02T22:04:15.780Zequipo`.  Y=	
+» COMPRA: iluminacion sobre meson linealefectivopagado2026-06-02T22:03:08.134ZequipoT-  A=	'¬@COMPRA: sistema de camarasefectivopagado2026-06-02T22:02:16.185ZequipoY,  K=	a¨ COMPRA: parasoles con 12 sillasefectivopagado2026-06-02T22:00:36.783ZequipoI+  +=	pê@COMPRA: sillas efectivopagado2026-06-02T21:59:17.022ZequipoQ*  ;=	~@COMPRA: mesas internas efectivopagado2026-06-02T21:58:39.175ZequipoU)  C=	j COMPRA: Salpicadero granitoefectivopagado2026-06-02T21:55:23.991ZequipoS(  ==	 Æ]@COMPRA: Meson en granitoefectivopagado2026-06-02T21:54:40.639ZequipoZ'  M=	0Ô COMPRA: Mueble exhibidor madera efectivopagado2026-06-02T21:53:19.997ZequipoT&  A=		ëCOMPRA: mueble alto maderaefectivopagado2026-06-02T21:52:11.104ZequipoT%  A=	ð COMPRA: mueble bajo maderaefectivopagado2026-06-02T21:51:26.325ZequipoM$  3=	\ÀCOMPRA: Bose musicaefectivopagado2026-06-02T21:50:13.622ZequipoO#  7=	\ÀCOMPRA: televisor ledefectivopagado2026-06-02T21:49:35.447ZequipoQ"  ;=	ÐCOMPRA: maquina wafleraefectivopagado2026-06-02T21:48:28.278ZequipoU!  C=	[€COMPRA: Refrigerador tortasefectivopagado2026-06-02T21:46:37.970ZequipoU   C=	[€COMPRA: Refrigerador tortasefectivopagado2026-06-02T21:45:52.944ZequipoT  A=	Ö COMPRA: refrigerador hacebefectivopagado2026-06-02T21:45:01.938ZequipoI  +=	 ê`COMPRA: Tecladoefectivopagado2026-06-02T21:44:18.917ZequipoN  5=	[`COMPRA: Registradoraefectivopagado2026-06-02T21:43:39.261ZequipoO  7=	w@COMPRA: Computador HPefectivopagado2026-06-02T21:42:55.811ZequipoK  /=	w@COMPRA: Nevera GEefectivopagado2026-06-02T21:42:04.741ZequipoP  9=	 ÎpCOMPRA: Cafetera osterefectivopagado2026-06-02T21:40:59.808ZequipoS  ?=	W0COMPRA: Microondas Kalleyefectivopagado2026-06-02T21:39:46.813ZequipoR  ==	Ö COMPRA: Congelador hacebefectivopagado2026-06-02T21:38:48.913ZequipoT  A=	“àCOMPRA: Maquina para hieloefectivopagado2026-06-02T21:38:01.297Zequipo„9 ˆ3	[{"id":14,"nombre":"jugo gulupa en agua","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa gulupa","isVirtual":true,"tieneVinculo":true},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":23,"nombre":"Canelazo ","precioIngreso":5000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]HD1efectivoN pagado2026-05-31 22:30:04venta„2 ˆ
+3	[{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]J8efectivoN pagado2026-05-31 22:28:05venta
+! I Ê C¢rP%õÁŒ\'
+õ
+Î”
+
+K
+ðÆ˜g+^Ï¡xH
+Ý û
+± Ê
+‚
+R
+"	ô	Ò	¢	r	D	
+Þ¸g>ïÆ¡zHÝ«q9 È’['øÅ“f.õÀ\$ì®>	Ûe!!                                  /%
+ 3
+ Brownie con helado @*øventaBrownie $#
+ 
+ Brownie ˆXventaBrownie º "I	! iluminacion sobre mesPO
+ 
+]Americano¸¸ ˜–d/imagenes/1787412863164-cafe juyagia.jpgventageneral$
+ 
+ Expreso	Ä	Ä†Ÿventageneralý ¤
+]Americano¸¸ ˜–d/imagenes/1784586624583-cafe juyagia.jpgventageneral
+¦ £
+_Americano	Ä¸†Ÿ/imagenes/1784586454378-cafe juyagia.jpegventagenT
+ /N
+ /
+QGalletas de avena¸/imagenes/1787951783260-images.jpgventageneral<P
+ =	! Mueble exhibidor madera 0Ô 2026-06-02equipogeneral6O
+ 1	! mueble alto madera	ë2026-06-02equipogeneral6N
+ 1	! mueble bajo madera8u 2026-06-02equipogeneral/M
+ #	! Bose musica\À2026-06-02equipogeneral1L
+ '	! televisor led\À2026-06-02equipogeneral3K
+ +	! maquina wafleraÐ2026-06-02equipogeneral7J
+ 3	! Refrigerador tortas[€2026-06-02equipogeneral6H
+ 1	! refrigerador hacebÖ 2026-06-02equipogeneral+G
+ 	! Teclado ê`2026-06-02equipogeneral0F
+ %	! Registradora[`2026-06-02equipogeneral1E
+ '	! Computador HPw@2026-06-02equipogeneral-D
+ 	! Nevera GEw@2026-06-02equipogeneral2C
+ )	! Cafetera oster Îp2026-06-02equipogeneral5B
+ /	! Microondas KalleyW02026-06-02equipogeneral4A
+ -	! Congelador hacebÖ 2026-06-02equipogeneral6@
+ 1	! Maquina para hielo“à2026-06-02equipogeneral7?
+ 9
+ )Jugo de mora en leche X#(ventapulpa de mora 6>
+ 7
+ )Jugo de mora en agua ˆXventapulpa de mora 8=
+ ;
+ )Jugo de mango en leche #(#(ventapulpa de mango0<
+ )! pulpa de mora 	Ä2026-05-31insumopulpa1;
+ +! pupa de chamba ¸2026-05-31insumopulpa6:
+ 5! pulpa de guanÃ¡bana 	Ä!2026-05-31insumopulpa09
+ )! pulpa de lulo 	Ä2026-05-31insumopulpa%8
+ !
+ Canada DryÐ ventageneral#7
+ 
+ Cocacola	Ä
+¬ventageneral'6
+ %
+ Agua grande ÜÐventageneral&5
+ #
+ Club trigo Ð”ventageneral%4
+ !
+ Club roja Ð”ventageneral'3
+ %
+ Club dorada Ð”ventageneral$2
+ 
+ Coronita ¸”ventageneral)1
+ )
+ Agua pequeÃ±a  è$ventageneral$0
+ 
+ BretaÃ±a ˜ ventageneral-/
+ /
+ Limonada natural ¸X'ventageneral5.
+ ?
+ Limonada de hierba buena X#('ventageneral,-
+ -
+ Limonada de cocoX#('ventageneral.,
+ 1
+ Limonada cerezada X#('ventageneral.+
+ 1
+ Malteada pequeÃ±a '.à'ventageneral *
+ 
+ MiloˆX'ventageneral,)
+ -
+ Malteada grande *ø:˜'ventageneral.(
+ 1
+ Cono tres bolitas @%'ventageneral.'
+ 1
+ Cono de dos bolas |d&âventageneral-&
+ -
+ Cono de una bola¸
+¬†cventageneral*$
+ ! Brownie ˆ
+2026-06-21insumopulpa/"
+ 3
+ Waffles con helado #(2È'
+ventageneral8!
+ G
+ Torta de naranja con amapola p@ventageneral. 
+ 3
+ Torta de chocolate p@ventageneral'
+ '	
+ Pan de bonos 
+ð
+¬ventageneral,
+ /
+ Galletas de mani ¸
+ventageneral,
+ /
+ Galletas de coco ¸
+ventageneral
+¦ ./
+ Galletas de avena¸ventageneral:
+ K
+ Galletas de chips de chocolate Ð¸aventageneral/
+ 5
+ Postre de maracuyÃ¡ p@ventageneral,
+ /
+ Postre de limÃ³n p@ventageneral(
+ '
+ Vino caliente@2È
+ventageneral&
+ 
+ Canelazo ˆ@†žventageneral1
+ 5
+ AromÃ¡tica de frutas¸
+¬†ventageneral2
+ 7
+ Aromatica de hierbas Ð¸†œventageneral%
+ 
+ Campesino¸ 'ventageneralÛ (
+ Americano	Ä¸†Ÿventageneral%
+ 
+ EspressoÐ	Ä†Ÿventageneral0
+ )! pulpa de mango	Ä12026-05-30insumopulpa3
+ 1
+ )Granizado de mango|*øventapulpa de mango.
+ %! pulpa gulupaˆ
+2026-05-30insumopulpa3
+ 3
+ %jugo gulupa en aguaˆX
+ventapulpa gulupa2
+ ;
+ jugo guanÃ¡bana en aguaˆXdventageneral.
+ 3
+ jugo chamba en aguaˆ#(bventageneral)
+ )
+ jugo lulo agua X_ventageneral 
+
+ 
+ latte
+¬ˆaventageneral.	
+ ! Licuadora
+» 2026-05-30equipogeneral7
+ 9
+ )Jugo de mango en agua ˆXventapulpa de mango   %
+ tintoÐ¸ ˜–dventageneral
+š B ^%ðÂ„L¶y6Ñži4
+õ
+¹
+ƒ
+O
+ç³Mæ«r>
+Ö
+ž
+_
+)	ò	¹	€	F	ê¾Š^/ÿÐ o:Î—a"é¾H•ìÅY$öÇ                                                                                                                                                                                                                                                                                                                                                                                            BW
+ I	! iluminacion sobre meson lineal
+» 2026-06-02equipogeneral6V
+ 1	! sistema de camaras'¬@2026-06-02equipogeneral<U
+ ;! parasoles con 12 sillas0Ô 2026-06-02equipogeneral,T
+ ! sillas J 
+2026-06-02equipogeneral3S
+ +	! mesas internas ~@2026-06-02equipogeneral7R
+ 3	! Salpicadero granitoj 2026-06-02equipogeneral5Q
+ -! Meson en granitoc. 2026-06-02equipogeneral/
+ #! Desechables6°2026-06-15insumogeneral,
+ 	! Arriendodp2026-07-05insumogeneral+
+ )
+ Granizado milo#(6°†›ventageneral2
+ /
+ )Granizado de lulo#(*øventapulpa de lulo >
+ ;
+ 5Granizado de guanabana #'*øventapulpa de guanÃ¡bana  + 	! lecheUð2026-07-05insumogeneral$
+ 
+ PataconesˆLventageneral(
+ 	! lecheT`2026-06-28insumogeneral    )
+ ! lecheUð2026-07-20insumogeneral6
+
+ 7
+ )Jugo de lulo en lecheX#(ventapulpa de lulo :	
+ =
+ +Jugo de chamba en leche X#(ventapupa de chamba (
+ '
+ Torta de cafep@ventageneral6
+ 1! Torta de chocolatep2026-06-13insumogeneral<
+ =	! Convertidor de 110 a 220øP2026-06-05equipogeneral3
+ +	! Filtro de agua W02026-06-05equipogeneral4
+ -! Tablas de picado2È2026-06-05equipogeneral2
+ )! Cuchara soperap2026-06-05equipogeneral4
+ -! Cuchara pequeÃ±ap	2026-06-05equipogeneral2
+ )! Cuchara larga @2026-06-05equipogeneral. 
+ !! Tenedores d2026-06-05equipogeneral.
+ !! Coladores 6°2026-06-05equipogeneral-~
+ !	! Destapador.à2026-06-05equipogeneral.}
+ #	! Sacacorchos.à2026-06-05equipogeneral-|
+ !	! Esprimidor.à2026-06-05equipogeneral*{
+ 	! Rayador@2026-06-05equipogeneral2z
+ )! Palas silicona'2026-06-05equipogeneral*y
+ 	! Tijerasa¨2026-06-05equipogeneral*x
+ ! Palas .à2026-06-05equipogeneral.w
+ !! Cuchillos a¨2026-06-05equipogeneral8v
+ 7	! Jarra plastica azucar>€2026-06-02equipogeneral7u
+ 1! Organizador azucar ³°2026-06-02equipogeneral7t
+ 5	! Escurridor cubiertos>€2026-06-02equipogeneral5s
+ /	! Medidor de tragos8€2026-06-02equipogeneral4r
+ -	! Medidor de acero8€2026-06-02equipogeneral=q
+ =! Jarras de acero cafetera~@2026-06-02equipogeneral6p
+ /! Bandejas pequenas »€2026-06-02equipogeneral5o
+ /! bandejas grandes } 2026-06-02equipogeneral/n
+ #! Jarra lechee2026-06-02equipogeneral2m
+ )! Jarra de agua e2026-06-02equipogeneral7l
+ 1! Tarros tapa vidrio_2026-06-02equipogeneral9k
+ 5! tarros manija vidrio“à2026-06-02equipogeneral2j
+ '! refractarias  »€2026-06-02equipogeneral1i
+ %! posillo milow 2026-06-02equipogeneral2h
+ '! Posillo tintoq 2026-06-02equipogeneral0g
+ #! Plato hondo8€2026-06-02equipogeneral2f
+ '! Plato pequenoÔÀ2026-06-02equipogeneral2e
+ '! Plato mediano ú 2026-06-02equipogeneral2d
+ '! Plato grande 8€2026-06-02equipogeneral2c
+ '! Vasos express@2026-06-02equipogeneral4b
+ +! copas de heladoH 2026-06-02equipogeneral:a
+ 7! vasos agua aromatica ÔÀ
+2026-06-02equipogeneral=`
+ =! vaso de 10 onz acanalado@2026-06-02equipogeneral3_
+ +! vasos de 10 onzix2026-06-02equipogeneral3^
+ )! vasos de 12onzÔÀ
+2026-06-02equipogeneral1]
+ %! Vasos 16 onzî 
+2026-06-02equipogeneral/\
+ !	! Obra civilO±€2026-06-02equipogeneral2[
+ )	! Iluminacion wc ê`2026-06-02equipogeneralAZ
+ E! iluminacion exterior apliqueq 2026-06-02equipogeneral;Y
+ 9! iluminacion de apliqueq 2026-06-02equipogeneralHX
+ S! IluminaciÃ³n sobre meson atencion  	ë2026-06-02equipogeneral
+   'æ §T²a
+Á
+p
+ Ïw!Ï€+
+Ö
+z
+&	Ñ	z	$Ì}2ç•Jü­_ÁnÇrÁæ                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                X^ ‚M3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]L,1efectivoL,pagado2026-06-06 16:50:00venta[]  M=øPCOMPRA: Convertidor de 110 a 220efectivopagado2026-06-05T22:16:32.710ZequipoR\  ;=W0COMPRA: Filtro de agua efectivopagado2026-06-05T22:03:40.239ZequipoS[  == ˜XCOMPRA: Tablas de picadoefectivopagado2026-06-05T22:03:07.347ZequipoPZ  9=]ÀCOMPRA: Cuchara soperaefectivopagado2026-06-05T22:02:35.932ZequipoSY  == ÒðCOMPRA: Cuchara pequeÃ±aefectivopagado2026-06-05T22:02:04.329ZequipoQX  9=ÔÀCOMPRA: Cuchara larga efectivopagado2026-06-05T22:01:06.644ZequipoMW  1= Ë COMPRA: Tenedores efectivopagado2026-06-05T22:00:35.028ZequipoMV  1= ¤COMPRA: Coladores efectivopagado2026-06-05T22:00:01.626ZequipoLU  1=.àCOMPRA: Destapadorefectivopagado2026-06-05T21:59:28.030ZequipoMT  3=.àCOMPRA: Sacacorchosefectivopagado2026-06-05T21:58:47.463ZequipoLS  1=.àCOMPRA: Esprimidorefectivopagado2026-06-05T21:58:16.535ZequipoIR  +=@COMPRA: Rayadorefectivopagado2026-06-05T21:57:48.776ZequipoPQ  9=N COMPRA: Palas siliconaefectivopagado2026-06-05T21:57:12.546ZequipoIP  +=a¨COMPRA: Tijerasefectivopagado2026-06-05T21:56:10.992ZequipoIO  )= Œ COMPRA: Palas efectivopagado2026-06-05T21:55:35.340ZequipoMN  1=$øCOMPRA: Cuchillos efectivopagado2026-06-05T21:54:56.080ZequipoVM  G=	>€COMPRA: Jarra plastica azucarefectivopagado2026-06-02T22:35:58.134ZequipoTL  A=	g`COMPRA: Organizador azucarefectivopagado2026-06-02T22:34:42.179ZequipoUK  E=	>€COMPRA: Escurridor cubiertosefectivopagado2026-06-02T22:34:02.716ZequipoSJ  ?=	8€COMPRA: Medidor de tragosefectivopagado2026-06-02T22:33:21.461ZequipoRI  ==	8€COMPRA: Medidor de aceroefectivopagado2026-06-02T22:32:49.890ZequipoZH  M=	zÀCOMPRA: Jarras de acero cafeteraefectivopagado2026-06-02T22:31:53.778ZequipoSG  ?=	î COMPRA: Bandejas pequenasefectivopagado2026-06-02T22:30:49.515ZequipoSF  ?=	 ú COMPRA: bandejas grandes efectivopagado2026-06-02T22:30:12.952ZequipoME  3=	 Ë COMPRA: Jarra lecheefectivopagado2026-06-02T22:29:40.354ZequipoPD  9=	 Ë COMPRA: Jarra de agua efectivopagado2026-06-02T22:29:10.332ZequipoTC  A=	°COMPRA: Tarros tapa vidrioefectivopagado2026-06-02T22:28:07.762ZequipoVB  E=	w@COMPRA: tarros manija vidrioefectivopagado2026-06-02T22:27:26.674ZequipoOA  7=	2€COMPRA: refractarias efectivopagado2026-06-02T22:24:53.098ZequipoN@  5=	¸ COMPRA: posillo miloefectivopagado2026-06-02T22:24:00.163ZequipoO?  7=	' COMPRA: Posillo tintoefectivopagado2026-06-02T22:23:10.129ZequipoM>  3=		Ä COMPRA: Plato hondoefectivopagado2026-06-02T22:22:21.897ZequipoO=  7=	w@COMPRA: Plato pequenoefectivopagado2026-06-02T22:21:44.369ZequipoO<  7=	Ð COMPRA: Plato medianoefectivopagado2026-06-02T22:20:46.992ZequipoO;  7=		Ä COMPRA: Plato grande efectivopagado2026-06-02T22:20:10.232ZequipoO:  7=	—€COMPRA: Vasos expressefectivopagado2026-06-02T22:18:47.300ZequipoQ9  ;=	°ÀCOMPRA: copas de heladoefectivopagado2026-06-02T22:18:07.768ZequipoW8  G=	O€COMPRA: vasos agua aromatica efectivopagado2026-06-02T22:17:05.856Zequipo
+    âFŒ
+	¯…UŠ â                                                                                                                                                                                                       …(…%	 Š3 2q$[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":8,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:37:26E	 ‚M3 1L,[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:35:11:11†*	 Œ3 4Sü[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:30:36:36„'	 ˆ3 1HD[{"id":14,"nombre":"jugo gulupa en agua","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa gulupa","isVirtual":true,"tieneVinculo":true},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":23,"nombre":"Canelazo ","precioIngreso":5000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-31 22:29:37†R	 Œg3 1y[{"id":12,"nombre":"jugo chamba en agua","precioIngreso":5000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-30 22:11:09ƒ	 …M3 32È[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":3,"nombre":"Jugo de mango en agua ","precioIngreso":5000,"precioVenta":7000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true}]pagado2026-05-30 20:03:207	 ‚13 1:˜[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-30 19:59:447	 ‚13 1p[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-05-30 19:34:39
+   f¦`Õ
+´½f                                                                                                                                                                                                                                                                                                                                           ‚W‚T	 „k3 42È[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 20:09:02ƒt	 ‡+3 3FP[{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 19:44:56‚[	 „y3 1g„[{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 19:44:20:20ƒr
+	 ‡'3 4Uð[{"id":136,"nombre":"Torta de cafe","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 15:32:36E	 ‚M3 32È[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-13 19:20:01:01…	 ‰K3 2 èl[{"id":51,"nombre":"Club dorada ","precioIngreso":2000,"precioVenta":4500,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":52,"nombre":"Club roja ","precioIngreso":2000,"precioVenta":4500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 22:00:19:19†C
+	 ŒG3 2 Á\[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":30,"nombre":"Galletas de mani ","precioIngreso":1800,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:54:14‚T		 „k3 1'[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-06 16:50:46:46
+   K 
+G
+­Cï‰#K                                                                                                                                                                                                                                                                                                                   Uf ‚M3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2È3nequi2Èpagado2026-06-15 15:32:45	venta‚ce „e
+3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":31,"nombre":"Pan de bonos ","precioIngreso":2800,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivoN pagado2026-06-15 14:39:19	venta‚cd „e
+3[{"id":31,"nombre":"Pan de bonos ","precioIngreso":2800,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivoN pagado2026-06-15 14:37:11ventaRc  A= »€COMPRA: Torta de chocolatenequipagado2026-06-13T19:24:17.267Zinsumo‚gb „k3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]'1efectivo'pagado2026-06-06 21:58:00venta†Wa ŒG3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":30,"nombre":"Galletas de mani ","precioIngreso":1800,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] Á\2efectivo Á\pagado2026-06-06 21:57:47venta†=` Œ3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Sü4efectivoSüpagado2026-06-06 16:56:42venta…6_ Š3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":8,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]q$2nequiq$pagado2026-06-06 16:52:09venta
+   	 1 
+g)
+Q	wnè 1                       Wo ‚M
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivo#(pagado2026-06-15 19:43:34
+ventaƒZn †S
+3[{"id":137,"nombre":"Jugo de chamba en leche ","precioIngreso":7000,"precioVenta":9000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pupa de chamba ","isVirtual":true,"tieneVinculo":true},{"id":138,"nombre":"Jugo de lulo en leche","precioIngreso":7000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de lulo ","isVirtual":true,"tieneVinculo":true}]ixefectivou0pagado2026-06-15 19:43:07
+venta‰m ‘!
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":56,"nombre":"Canada Dry","precioIngreso":2000,"precioVenta":4000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":54,"nombre":"Agua grande ","precioIngreso":1500,"precioVenta":2000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":55,"nombre":"Cocacola","precioIngreso":2500,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":11,"nombre":"jugo lulo agua","precioIngreso":4000,"precioVenta":7000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":12,"nombre":"jugo chamba en agua","precioIngreso":5000,"precioVenta":9000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":33,"nombre":"Torta de naranja con amapola ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]xôefectivo† pagado2026-06-15 19:41:04
+venta„l ‡'3[{"id":136,"nombre":"Torta de cafe","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Uð4efectivo ÃPpagado2026-06-15 17:32:00
+ventaWk ‚M
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2Èefectivo:˜pagado2026-06-15 16:59:46
+ventaUj ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]
+¬efectivo pagado2026-06-15 15:34:40
+venta‚ci „e
+3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":31,"nombre":"Pan de bonos ","precioIngreso":2800,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivoN pagado2026-06-15 15:34:16
+ventaUh ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]
+¬efectivo pagado2026-06-15 15:33:17	venta…g ‰K3[{"id":51,"nombre":"Club dorada ","precioIngreso":2000,"precioVenta":4500,"cantidad":6,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":52,"nombre":"Club roja ","precioIngreso":2000,"precioVenta":4500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] èl2nequi èlpagado2026-06-15 15:32:50	venta
+   q (
+Ï]	ö‡¢—¾æq                                                                                                                                                                                                                                                                                                                                                 ƒ{ …W3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true}]8¤2nequi8¤pagado2026-06-15 21:51:35
+ventaUz ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]D\efectivoN pagado2026-06-15 21:46:40
+ventaUy ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]D\efectivoN pagado2026-06-15 21:15:53
+ventaVx ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Xefectivo ÃPpagado2026-06-15 21:05:17
+venta„w ‡/3[{"id":25,"nombre":"Postre de limÃ³n ","precioIngreso":6000,"precioVenta":8000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":26,"nombre":"Postre de maracuyÃ¡ ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] ˆ¸4nequi ˆ¸pagado2026-06-15 20:50:18
+ventabv ‚c
+3[{"id":33,"nombre":"Torta de naranja con amapola ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]@efectivo'pagado2026-06-15 20:33:47
+venta‚lu „}
+3[{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":26,"nombre":"Postre de maracuyÃ¡ ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]m`nequim`pagado2026-06-15 20:33:09
+venta‚dt „k3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2È4nequi2Èpagado2026-06-15 20:32:21
+venta‚os „y3[{"id":20,"nombre":"Campesino","precioIngreso":3000,"precioVenta":4000,"cantidad":5,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]g„1efectivo ÃPpagado2026-06-15 20:32:16
+ventaMr  3=6°COMPRA: Desechablesefectivopagado2026-06-15T19:54:14.011Z
+insumo„q ‡+3[{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]FP3efectivoN pagado2026-06-15 19:53:02
+ventaUp ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Xefectivo#(pagado2026-06-15 19:43:46
+venta
+   
+ v	v	ßt^ÏÔØ v                                                                                       ‚b‚_	 …3 1@[{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":53,"nombre":"Club trigo ","precioIngreso":2000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 16:43:56y	 ƒ53 1FP[{"id":137,"nombre":"Jugo de chamba en leche ","precioIngreso":7000,"precioVenta":9000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pupa de chamba ","isVirtual":true,"tieneVinculo":true}]pagado2026-07-05 15:37:22ƒu	 ‡-3 3'[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 15:32:35:35ƒ	 …[3 1P[{"id":40,"nombre":"Cono tres bolitas ","precioIngreso":8000,"precioVenta":9500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true}]pagado2026-06-18 19:08:297	 ‚13 3¸[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-18 16:15:59‚Y	 „u3 2.à[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 22:17:06‚e	 …
+3 1Bh[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 22:16:44:44…	 ‰k3 4YØ[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 21:48:26ƒ
+	 …W3 28¤[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true}]pagado2026-06-15 21:47:40:40ƒw	 ‡/3 4 ˆ¸[{"id":25,"nombre":"Postre de limÃ³n ","precioIngreso":6000,"precioVenta":8000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":26,"nombre":"Postre de maracuyÃ¡ ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-06-15 20:39:57
+   	 å 
+é>
+W@Ä³Ù] å                                                                                                                                                                                                           ‚t …
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]@tefectivoN pagado2026-06-16 21:45:19venta‚x …
+
+3[{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Refectivo† pagado2026-06-16 21:08:16ventaV ‚I3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]X3efectivoXpagado2026-06-16 20:49:30venta„
+ ‡73[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2È2efectivoN pagado2026-06-16 20:16:34venta‚x  …
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":21,"nombre":"Aromatica de hierbas ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Bh1efectivoN pagado2026-06-15 22:24:13
+venta„ ‡E
+3[{"id":28,"nombre":"Galletas de avena","precioIngreso":1800,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]8¤efectivo"àpagado2026-06-15 22:16:20
+ventad~ ‚g
+3[{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pefectivoppagado2026-06-15 22:13:28
+venta…(} ‰k3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]YØ4efectivo œ@pagado2026-06-15 22:13:18
+venta„| ‡E
+3[{"id":28,"nombre":"Galletas de avena","precioIngreso":1800,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]8¤efectivo ÃPpagado2026-06-15 21:54:28
+venta
+    ¯ $V³ÖŽ	s ”„·Ûÿ‰ ¯                                                                                                                                           V ‚I3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]X3efectivoN pagado2026-07-05 18:00:22
+venta‚r …3[{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":53,"nombre":"Club trigo ","precioIngreso":2000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]@1efectivo'pagado2026-07-05 17:25:29
+ventaX ‚M
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]eefectivo ÃPpagado2026-07-05 17:25:20
+ventaX ‚M
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivo ÅDpagado2026-07-05 16:49:43
+ventaI ‚1
+3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pefectivo'pagado2026-07-05 16:31:49
+venta‚
+ ƒ53[{"id":137,"nombre":"Jugo de chamba en leche ","precioIngreso":7000,"precioVenta":9000,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pupa de chamba ","isVirtual":true,"tieneVinculo":true}]FP1efectivoN pagado2026-07-05 16:11:20
+venta„ ‡-3[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]'3efectivoN pagado2026-07-05 15:46:50
+ventaO ‚=
+3[{"id":141,"nombre":"Patacones","precioIngreso":5000,"precioVenta":7500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]Lefectivo@pagado2026-07-05 15:45:42
+venta„
+ ‡M
+3[{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":54,"nombre":"Agua grande ","precioIngreso":1500,"precioVenta":2000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":27,"nombre":"Galletas de chips de chocolate ","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pefectivoppagado2026-07-05 14:28:05
+ventaE	  '=COMPRA: lecheefectivopagado2026-06-28T16:31:41.551ZinsumoY ‚Q
+3[{"id":43,"nombre":"Malteada pequeÃ±a ","precioIngreso":10000,"precioVenta":12000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}].àefectivo:˜pagado2026-06-18 19:29:23ventaƒ …[3[{"id":40,"nombre":"Cono tres bolitas ","precioIngreso":8000,"precioVenta":9500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true}]P1efectivo]Àpagado2026-06-18 19:29:03ventaJ ‚13[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]¸3efectivoˆpagado2026-06-18 16:29:12ventaX ‚M3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]d1efectivo'pagado2026-06-18 16:16:18venta
+    ®>
+F€
+OèÝ‰5k ®                                                                                                                                                :%	 ‚13 1.à[{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":4,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pendiente2026-07-20 22:01:14G$	 ‚Q3 12È[{"id":34,"nombre":"Waffles con helado ","precioIngreso":9000,"precioVenta":13000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 22:43:13‚N#	 „_3 2#([{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":48,"nombre":"BretaÃ±a ","precioIngreso":2200,"precioVenta":4000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 22:42:57:57…	"	 ‰S3 1 ˜X[{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 21:55:38E!	 ‚M3 4L,[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 20:46:38„ 	 ‡K3 1 ö[{"id":145,"nombre":"Granizado milo","precioIngreso":9000,"precioVenta":14000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":34,"nombre":"Waffles con helado ","precioIngreso":9000,"precioVenta":13000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 20:20:19:19‚a	 …3 3~ô[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":25,"nombre":"Postre de limÃ³n ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 20:17:25:25„.	 ˆ3 1YØ[{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true},{"id":56,"nombre":"Canada Dry","precioIngreso":2000,"precioVenta":4000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":33,"nombre":"Torta de naranja con amapola ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 18:05:55C	 ‚I3 3X[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 17:37:55ƒr	 ‡'3 4'[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":54,"nombre":"Agua grande ","precioIngreso":1500,"precioVenta":2000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 17:32:17:17<	 ‚;3 2#([{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]pagado2026-07-05 17:11:25:25
+   u ëÂ¬„nX1
+÷Ð±œu_@
+÷
+Ý
+¹
+”
+c
+A
+%
+êË¥Šf6óØ¶¡ƒnY;
+ù
+×
+Á
+¥
+„
+o
+Q
+0
+	ö	×	³	Ž	q	W	7	øÊŸxU3íØ½š„bG"ôÑ¬—uS1ìÊ©…aL'Õ³’nK$çÀxS.èÒ®‰eE'öÚÄž|P9                                   "u	 1 	 'Cono de dos bolas ddt	 	  Žtinto¸p*s	 =   ‰Jugo de chamba en leche #(FP r	 - 	 Œ&Cono de una bola
+¬
+¬$q	 5 	 ŒAromÃ¡tica de frutas
+¬
+¬p	 	 	 Œtinto¸¸o	  	 ‹ PataconesLL/n	 K 	 ŠGalletas de chips de chocolate ¸¸m	 % 	 Š6Agua grande ÐÐl	 ) 	 Š1Agua pequeÃ±a èè"k	 1 	 ˆ+Malteada pequeÃ±a .à.à#j	 3 	 ‡%Brownie con helado *ø*ø"i	 1 	 ‡(Cono tres bolitas %%h	 	 	 †tinto¸¸"g	 1 	 …'Cono de dos bolas dd f	 - 	 „&Cono de una bola
+¬
+¬#e	 1  „'Cono de dos bolas d2È#d	 1  ƒ'Cono de dos bolas d2È#c	 3 	 ƒ Torta de chocolate @@!b	 -  ‚&Cono de una bola
+¬X%a	 7 	 Aromatica de hierbas ¸¸%`	 5  AromÃ¡tica de frutas
+¬X_	 	 	 tinto¸¸%^	 7 	 €Aromatica de hierbas ¸¸!]	 -  €&Cono de una bola
+¬6°"\	 3 	 Torta de chocolate @@[	 - 	&Cono de una bola
+¬
+¬ Z	 / 	Galletas de avena¸¸/Y	 K ~Galletas de chips de chocolate ¸pX	 - 	}&Cono de una bola
+¬
+¬#W	 5 	}AromÃ¡tica de frutas
+¬
+¬V	 	 	}tinto¸¸"U	 1 }'Cono de dos bolas d2È"T	 3 	| Torta de chocolate @@S	 - 	|&Cono de una bola
+¬
+¬ R	 / 	|Galletas de avena¸¸"Q	 3 	{%Brownie con helado *ø*øP	 - 	{&Cono de una bola
+¬
+¬ O	 - z&Cono de una bola
+¬D\ N	 - y&Cono de una bola
+¬D\ M	 - x&Cono de una bola
+¬XL	 	 	wtinto¸¸#K	 5 	wPostre de maracuyÃ¡ @@!J	 / wPostre de limÃ³n @]À,I	 G 	v!Torta de naranja con amapola @@#H	 5 	uPostre de maracuyÃ¡ @@G	  uCampesino N  F	 - t&Cono de una bola
+¬XE	 	 ttinto¸p!D	 1 	s'Cono de dos bolas ddC	  sCampesino N B	 	 	qtinto¸¸ A	 - q&Cono de una bola
+¬X"@	 3 	q Torta de chocolate @@ ?	 - p&Cono de una bola
+¬X!>	 1 	o'Cono de dos bolas dd%=	 7 	n ŠJugo de lulo en leche#(#()<	 = n ‰Jugo de chamba en leche #(FP,;	 G 	m!Torta de naranja con amapola @@:	 ! 	m8Canada Dry  "9	 3 	mjugo chamba en agua#(#(8	 ) mjugo lulo aguaXR7	  m7Cocacola
+¬X6	 % 	m6Agua grande ÐÐ#5	 1 m'Cono de dos bolas d ±¼"4	 3 	l Torta de chocolate @@3	 ' 	l ˆTorta de cafe@@2	 	 ltinto¸p"1	 1 k'Cono de dos bolas d2È0	 - 	j&Cono de una bola
+¬
+¬/	 ' 	iPan de bonos 
+¬
+¬.	 	 	itinto¸¸-	 - 	h&Cono de una bola
+¬
+¬,	 ! g4Club roja ”#(+	 	 gtinto¸p *	 - g&Cono de una bola
+¬D\)	 % g3Club dorada ”ix"(	 1 f'Cono de dos bolas d2È'	 ' 	ePan de bonos 
+¬
+¬&	 	 	etinto¸¸%	 	 	dtinto¸¸$	 ' 	dPan de bonos 
+¬
+¬#	 	 	btinto¸¸ "	 - b&Cono de una bola
+¬X!	  a2Coronita ”ix 	 - 	a&Cono de una bola
+¬
+¬ 	 / 	aGalletas de mani ¸¸.	 K 	aGalletas de chips de chocolate ¸¸"	 1 a'Cono de dos bolas d2È	  `Campesino @$	 7 	`Aromatica de hierbas ¸¸	 ) 	`1Agua pequeÃ±a èè#	 5 	`AromÃ¡tica de frutas
+¬
+¬	 	 `tinto¸p	  _2Coronita ” Œ  	 - _&Cono de una bola
+¬X/	 K _Galletas de chips de chocolate ¸p#	 1 _'Cono de dos bolas d ±¼"	 1 ^'Cono de dos bolas dL,	  	Canelazo @@#	 5 	AromÃ¡tica de frutas
+¬
+¬"	 3 	jugo gulupa en aguaXX	 ) 	jugo lulo aguaXX	  	
+latteˆˆ%
+	 9 	Jugo de mango en agua XX	 	 	tinto¸¸	 ) 	jugo lulo aguaXX%
+	 9 	Jugo de mango en agua XX		  	
+latteˆˆ"	 3 	jugo chamba en agua#(#(%	 9 	Jugo de mango en agua XX	 	 tinto¸p	 	 tinto¸:˜&	 9 Jugo de mango en agua Xm`	 	 tinto¸]À'	 9 Jugo de mango en agua X ¤	 		 tinto¸p
+   .	Ê Ûµ˜uS5õÆªhC
+ú
+Ï
+ª
+
+l
+F
+"þÙÂŸyU/	çÄŸ|T0
+ä
+¼
+›
+
+g
+A
+)
+
+	é	Ê                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      #	 % 	 §6Agua grande ÐÐ!"	 -  §&Cono de una bola
+¬X!	  	 ¥0BretaÃ±a    	  	 ¥
+latteˆˆ#	 3 	 ¤"Waffles con helado 2È2È	 	  £tinto¸#(	  	 £2Coronita ””	 ) 	 £1Agua pequeÃ±a èè%	 5  £AromÃ¡tica de frutas
+¬_´$	 5 	 ¢Postre de maracuyÃ¡ @@"	 1 	 ¢'Cono de dos bolas dd!	 -  ¢&Cono de una bola
+¬)%	 5  ¡AromÃ¡tica de frutas
+¬X 	 - 	 ¡&Cono de una bola
+¬
+¬"	 1 	 ¡'Cono de dos bolas dd 	 - 	  )Malteada grande :˜:˜	 ) 	   ‘Granizado milo6°6°#	 3 	 Ÿ"Waffles con helado 2È2È#	 3 	 Ÿ Torta de chocolate @@!	 )  Ÿ ‘Granizado milo6° ¤#	 1  ž'Cono de dos bolas dL, 	 - 	 &Cono de una bola
+¬
+¬
+	 	 	 tinto¸¸"	 1 	 'Cono de dos bolas dd!	 -  œ&Cono de una bola
+¬_´!
+	 / 	 œPostre de limÃ³n @@#		 3 	 ›%Brownie con helado *ø*ø 	 - 	 š&Cono de una bola
+¬
+¬	  	 ™7Cocacola
+¬
+¬"	 1 	 ˜'Cono de dos bolas dd(	 ; 	 — Granizado de guanabana *ø*ø"	 1 	 —'Cono de dos bolas dd!	 / 	 —Postre de limÃ³n @@"	 / 	 — Granizado de lulo*ø*ø"	 1 	 —Granizado de mango*ø*ø 	   •2Coronita ”#(	 ! 	 ”8Canada Dry  -~	 G 	 ”!Torta de naranja con amapola @@#}	 3 	 ”%Brownie con helado *ø*ø|	  	 “2Coronita ””{	 % 	 “6Agua grande ÐÐ z	 - 	 “&Cono de una bola
+¬
+¬!y	 -  ’&Cono de una bola
+¬Xx	 # 	 ‘5Club trigo ””$w	 5 	 ‘AromÃ¡tica de frutas
+¬
+¬#v	 1  'Cono de dos bolas de
+   
+© 
+÷±
+á
+—¬Ñÿ&"©                                                                                                                                                                                                                                                                                                                                                                                                             ‚u …3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":25,"nombre":"Postre de limÃ³n ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]~ô3efectivo ê`pagado2026-07-05 20:45:51
+venta‚  ƒ
+3[{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true}]*øefectivoppagado2026-07-05 20:16:54
+ventaU ‚I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]
+¬efectivo pagado2026-07-05 20:16:39
+ventaN ‚9
+3[{"id":55,"nombre":"Cocacola","precioIngreso":2500,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]
+¬efectivo œ@pagado2026-07-05 19:37:11
+ventaW ‚M
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]defectivodpagado2026-07-05 19:33:10
+venta‡g Ži
+3[{"id":16,"nombre":"Granizado de mango","precioIngreso":5500,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de mango","isVirtual":true,"tieneVinculo":true},{"id":143,"nombre":"Granizado de guanabana ","precioIngreso":8999,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de guanÃ¡bana ","isVirtual":true,"tieneVinculo":true},{"id":144,"nombre":"Granizado de lulo","precioIngreso":9000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"pulpa de lulo ","isVirtual":true,"tieneVinculo":true},{"id":25,"nombre":"Postre de limÃ³n ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] ¹Œefectivo ÃPpagado2026-07-05 19:09:39
+ventaG  '=UðCOMPRA: lecheefectivopagado2026-07-05T18:23:38.386Z
+insumoL ‚;3[{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]#(2nequi#(pagado2026-07-05 18:22:25
+venta„B ˆ3[{"id":37,"nombre":"Brownie con helado ","precioIngreso":8000,"precioVenta":11000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"Brownie ","isVirtual":true,"tieneVinculo":true},{"id":56,"nombre":"Canada Dry","precioIngreso":2000,"precioVenta":4000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":33,"nombre":"Torta de naranja con amapola ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]YØ1efectivo ÃPpagado2026-07-05 18:16:09
+venta„ ‡'3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":54,"nombre":"Agua grande ","precioIngreso":1500,"precioVenta":2000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]'4efectivo'pagado2026-07-05 18:02:16
+venta
+   
+ ( 
+÷
+	‰sZ¹Û v (            K&  -=dpCOMPRA: Arriendoefectivopagado2026-07-05T23:35:48.272Z
+insumo‚a% „_3[{"id":10,"nombre":"latte","precioIngreso":3500,"precioVenta":5000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":48,"nombre":"BretaÃ±a ","precioIngreso":2200,"precioVenta":4000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]#(2efectivo'pagado2026-07-05 23:34:52
+ventaZ$ ‚Q3[{"id":34,"nombre":"Waffles con helado ","precioIngreso":9000,"precioVenta":13000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2È1efectivoN pagado2026-07-05 22:59:10
+venta…# ‰S3[{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":7,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":49,"nombre":"Agua pequeÃ±a ","precioIngreso":800,"precioVenta":1000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":50,"nombre":"Coronita ","precioIngreso":3000,"precioVenta":4500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] ˜X1efectivo ÃPpagado2026-07-05 22:03:31
+venta„" ‡I
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":26,"nombre":"Postre de maracuyÃ¡ ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]a¨efectivoa¨pagado2026-07-05 21:56:52
+venta„! ‡I
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":22,"nombre":"AromÃ¡tica de frutas","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]BhnequiBhpagado2026-07-05 21:54:34
+venta‚t  …
+3[{"id":145,"nombre":"Granizado milo","precioIngreso":9000,"precioVenta":14000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":41,"nombre":"Malteada grande ","precioIngreso":11000,"precioVenta":15000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]qHefectivoqHpagado2026-07-05 21:53:52
+venta„ ‡K3[{"id":145,"nombre":"Granizado milo","precioIngreso":9000,"precioVenta":14000,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":34,"nombre":"Waffles con helado ","precioIngreso":9000,"precioVenta":13000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":32,"nombre":"Torta de chocolate ","precioIngreso":6000,"precioVenta":8000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}] ö1nequi öpagado2026-07-05 20:56:14
+ventaX ‚M3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":3,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]L,4efectivoN pagado2026-07-05 20:55:52
+venta„ ‡)
+3[{"id":39,"nombre":"Cono de dos bolas ","precioIngreso":5500,"precioVenta":6500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":1,"nombre":"tinto","precioIngreso":2000,"precioVenta":3000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]2ÈefectivoN pagado2026-07-05 20:46:18
+venta
+   Ž Ž                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ‚n' „{
+3[{"id":38,"nombre":"Cono de una bola","precioIngreso":3000,"precioVenta":3500,"cantidad":2,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"},{"id":54,"nombre":"Agua grande ","precioIngreso":1500,"precioVenta":2000,"cantidad":1,"descripcion":"","imagen":null,"tipo":"venta","subTipo":"general"}]#(efectivo#(pagado2026-07-21 17:30:45
+venta
