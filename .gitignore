@@ -1,5 +1,7 @@
 node_modules/
 cafeteria.db
+cafeteria.db-shm
+cafeteria.db-wal
 cafeteria-app.exe
 public/imagenes/*
 !public/imagenes/.gitkeep
