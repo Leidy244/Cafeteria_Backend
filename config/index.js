@@ -7,5 +7,5 @@ module.exports = {
   jwtSecret: process.env.JWT_SECRET || "fallback_secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "24h",
   bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS, 10) || 10,
-  corsOrigin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  corsOrigin: (process.env.CORS_ORIGIN || "http://localhost:5173").split(",").map((s) => s.trim()).filter(Boolean),
 };

@@ -15,7 +15,15 @@ const app = express();
 
 // Security
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(cors({ origin: config.corsOrigin, credentials: true }));
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin || config.corsOrigin.includes(origin)) return cb(null, true);
+      return cb(null, false);
+    },
+    credentials: true,
+  })
+);
 
 // Rate limiting on auth
 const loginLimiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100, standardHeaders: true, legacyHeaders: false });
