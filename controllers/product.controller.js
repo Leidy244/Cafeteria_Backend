@@ -48,4 +48,14 @@ const remove = asyncHandler(async (req, res) => {
   res.json({ mensaje: "Eliminado correctamente" });
 });
 
-module.exports = { getAll, create, update, remove };
+const importarExcel = asyncHandler(async (req, res) => {
+  if (!req.file) throw Object.assign(new Error("Debes adjuntar un archivo Excel"), { status: 400 });
+
+  const resultado = await productService.importFromExcel(req.file.buffer);
+  res.json({
+    mensaje: `Se importaron ${resultado.insertados} de ${resultado.total} registros.`,
+    ...resultado,
+  });
+});
+
+module.exports = { getAll, create, update, remove, importarExcel };
