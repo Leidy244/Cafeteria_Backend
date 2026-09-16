@@ -8,6 +8,15 @@ const server = app.listen(config.port, async () => {
   console.log(`\n  Juyasia Backend v2.0`);
   console.log(`  Servidor corriendo en http://localhost:${config.port}`);
   console.log(`  Entorno: ${config.nodeEnv}\n`);
+  if (config.db.databaseUrl) {
+    try {
+      console.log(`  DB: DATABASE_URL detectada (${new URL(config.db.databaseUrl).host})`);
+    } catch {
+      console.log(`  DB: DATABASE_URL detectada (formato invalido)`);
+    }
+  } else {
+    console.log(`  DB: Sin DATABASE_URL -> host local ${config.db.host}:${config.db.port}`);
+  }
 
   try {
     await initDatabase();
