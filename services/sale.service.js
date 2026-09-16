@@ -20,7 +20,7 @@ const createSale = async (data) => {
       );
 
       await run(
-        `UPDATE productos SET cantidad = GREATEST(0, CAST(cantidad AS SIGNED) - ?) WHERE id = ?`,
+        `UPDATE productos SET cantidad = GREATEST(0, cantidad - ?) WHERE id = ?`,
         [item.cantidad, item.id]
       );
 
