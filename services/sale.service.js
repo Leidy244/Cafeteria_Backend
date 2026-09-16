@@ -8,7 +8,7 @@ const createSale = async (data) => {
   try {
     const { lastID: ventaId } = await run(
       `INSERT INTO ventas (carrito, total, mesa, metodoPago, turnoId, montoRecibido, fecha, tipo)
-       VALUES (?, ?, ?, ?, ?, ?, datetime('now'), 'venta')`,
+       VALUES (?, ?, ?, ?, ?, ?, NOW(), 'venta')`,
       [JSON.stringify(carrito), total, mesa, metodoPago, turnoId, montoRecibido]
     );
 
@@ -20,14 +20,14 @@ const createSale = async (data) => {
       );
 
       await run(
-        `UPDATE productos SET cantidad = MAX(0, CAST(cantidad AS INTEGER) - ?) WHERE id = ?`,
+        `UPDATE productos SET cantidad = GREATEST(0, CAST(cantidad AS SIGNED) - ?) WHERE id = ?`,
         [item.cantidad, item.id]
       );
 
       const tieneVinculo = item.subTipo && item.subTipo !== "general" && item.subTipo !== "pulpa";
       if (tieneVinculo) {
         await run(
-          `UPDATE productos SET cantidad = MAX(0, cantidad - ?)
+          `UPDATE productos SET cantidad = GREATEST(0, cantidad - ?)
            WHERE subTipo = 'pulpa' AND LOWER(nombre) LIKE LOWER(?)`,
           [item.cantidad, `%${item.subTipo}%`]
         );

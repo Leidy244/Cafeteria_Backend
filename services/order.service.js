@@ -23,7 +23,7 @@ const create = (data) => {
   const { carrito, total, mesa, estado } = data;
   return run(
     `INSERT INTO pedidos (carrito, total, mesa, estado, fecha)
-     VALUES (?, ?, ?, ?, datetime('now'))`,
+     VALUES (?, ?, ?, ?, NOW())`,
     [JSON.stringify(carrito), total, mesa, estado || "pendiente"]
   );
 };

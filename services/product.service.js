@@ -1,4 +1,4 @@
-const { run, get, all, beginTransaction, commit, rollback } = require("../db/helpers");
+const { run, get, all, beginTransaction, commit, rollback, toSqlDate } = require("../db/helpers");
 const XLSX = require("xlsx");
 
 const EXPENSE_TYPES = ["insumo", "equipo"];
@@ -64,7 +64,7 @@ const registerExpense = async (data) => {
   await run(
     `INSERT INTO ventas (total, mesa, metodoPago, estado, fecha, turnoId, tipo)
      VALUES (?, ?, ?, 'pagado', ?, COALESCE(?, (SELECT id FROM caja WHERE estado = 'abierto' ORDER BY id DESC LIMIT 1)), ?)`,
-    [gastoTotal, `COMPRA: ${nombre}`, metodo, new Date().toISOString(), tId, tipo]
+    [gastoTotal, `COMPRA: ${nombre}`, metodo, toSqlDate(new Date()), tId, tipo]
   );
 };
 

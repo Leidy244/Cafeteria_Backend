@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch-path=./config --watch-path=./controllers --watch-path=./db --watch-path=./middleware --watch-path=./routes --watch-path=./services --watch-path=./utils --watch-path=./validators --watch-path=./app.js --watch-path=./index.js index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "npm rebuild sqlite3"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
@@ -23,7 +22,7 @@
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
     "multer": "^2.1.1",
-    "sqlite3": "^6.0.1",
+    "mysql2": "^3.24.4",
     "xlsx": "^0.18.5",
     "zod": "^3.24.0"
   }

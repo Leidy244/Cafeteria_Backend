@@ -1,57 +1,87 @@
-const fs = require("fs");
-const path = require("path");
-const sqlite3 = require("sqlite3").verbose();
+const mysql = require("mysql2/promise");
 const config = require("../config");
 
-const dbDir = path.dirname(config.dbPath);
-if (dbDir && dbDir !== ".") fs.mkdirSync(dbDir, { recursive: true });
-
-const db = new sqlite3.Database(config.dbPath);
-
-db.serialize(() => {
-  db.run("PRAGMA journal_mode = WAL");
-  db.run("PRAGMA foreign_keys = ON");
-  db.run("PRAGMA busy_timeout = 5000");
+const pool = mysql.createPool({
+  host: config.db.host,
+  port: config.db.port,
+  user: config.db.user,
+  password: config.db.password,
+  database: config.db.database,
+  waitForConnections: true,
+  connectionLimit: 10,
+  connectTimeout: 10000,
+  dateStrings: true,
 });
 
-const run = (sql, params = []) =>
-  new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve({ lastID: this.lastID, changes: this.changes });
-    });
-  });
+const toSqlDate = (value) => {
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return value || null;
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};
 
-const get = (sql, params = []) =>
-  new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row || null);
-    });
-  });
+let txConn = null;
 
-const all = (sql, params = []) =>
-  new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows || []);
-    });
-  });
+const run = async (sql, params = []) => {
+  const conn = txConn || pool;
+  const [result] = await conn.execute(sql, params);
+  return { lastID: result.insertId, changes: result.affectedRows };
+};
 
-const serialize = (callback) =>
-  new Promise((resolve, reject) => {
-    db.serialize(() => {
-      try {
-        callback(db);
-        resolve();
-      } catch (err) {
-        reject(err);
+const get = async (sql, params = []) => {
+  const conn = txConn || pool;
+  const [rows] = await conn.execute(sql, params);
+  return rows[0] || null;
+};
+
+const all = async (sql, params = []) => {
+  const conn = txConn || pool;
+  const [rows] = await conn.execute(sql, params);
+  return rows;
+};
+
+const serialize = async () => {
+  await pool.query("SELECT 1");
+};
+
+const beginTransaction = async () => {
+  if (!txConn) {
+    txConn = await pool.getConnection();
+    await txConn.beginTransaction();
+  }
+  return txConn;
+};
+
+const commit = async () => {
+  if (!txConn) return;
+  const conn = txConn;
+  txConn = null;
+  await conn.commit();
+  conn.release();
+};
+
+const rollback = async () => {
+  if (!txConn) return;
+  const conn = txConn;
+  txConn = null;
+  await conn.rollback();
+  conn.release();
+};
+
+const db = {
+  close: async (cb) => {
+    try {
+      if (txConn) {
+        await txConn.rollback();
+        txConn.release();
+        txConn = null;
       }
-    });
-  });
+      await pool.end();
+      if (typeof cb === "function") cb(null);
+    } catch (err) {
+      if (typeof cb === "function") cb(err);
+    }
+  },
+};
 
-const beginTransaction = () => run("BEGIN TRANSACTION");
-const commit = () => run("COMMIT");
-const rollback = () => run("ROLLBACK");
-
-module.exports = { db, run, get, all, serialize, beginTransaction, commit, rollback };
+module.exports = { db, run, get, all, serialize, beginTransaction, commit, rollback, toSqlDate };

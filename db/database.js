@@ -1,81 +1,89 @@
 const { run } = require("./helpers");
 
+const createIndex = async (sql) => {
+  try {
+    await run(sql);
+  } catch (err) {
+    if (err.code !== "ER_DUP_KEYNAME") throw err;
+  }
+};
+
 const initDatabase = async () => {
   await run(`CREATE TABLE IF NOT EXISTS productos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nombre TEXT,
-    precioIngreso REAL,
-    precioVenta REAL,
-    cantidad INTEGER,
+    precioIngreso DOUBLE,
+    precioVenta DOUBLE,
+    cantidad INT,
     descripcion TEXT,
     imagen TEXT,
-    tipo TEXT,
-    subTipo TEXT DEFAULT 'general'
-  )`);
+    tipo VARCHAR(20),
+    subTipo VARCHAR(50) DEFAULT 'general'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
   await run(`CREATE TABLE IF NOT EXISTS ventas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     carrito TEXT,
-    total REAL NOT NULL,
-    mesa TEXT DEFAULT 'N/A',
-    metodoPago TEXT NOT NULL,
-    montoRecibido REAL DEFAULT 0,
-    estado TEXT DEFAULT 'pagado',
-    fecha TEXT NOT NULL,
-    turnoId INTEGER NOT NULL,
-    tipo TEXT DEFAULT 'venta'
-  )`);
+    total DOUBLE NOT NULL,
+    mesa VARCHAR(50) DEFAULT 'N/A',
+    metodoPago VARCHAR(20) NOT NULL,
+    montoRecibido DOUBLE DEFAULT 0,
+    estado VARCHAR(20) DEFAULT 'pagado',
+    fecha DATETIME NOT NULL,
+    turnoId INT NOT NULL,
+    tipo VARCHAR(20) DEFAULT 'venta'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
   await run(`CREATE TABLE IF NOT EXISTS detalle_ventas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    venta_id INTEGER,
-    producto_id INTEGER,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    venta_id INT,
+    producto_id INT,
     nombre TEXT,
-    precioIngreso REAL,
-    precioVenta REAL,
-    cantidad INTEGER,
-    subtotal REAL,
+    precioIngreso DOUBLE,
+    precioVenta DOUBLE,
+    cantidad INT,
+    subtotal DOUBLE,
     FOREIGN KEY(venta_id) REFERENCES ventas(id)
-  )`);
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
   await run(`CREATE TABLE IF NOT EXISTS caja (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    montoInicial REAL DEFAULT 0,
-    montoEfectivo REAL DEFAULT 0,
-    montoNequi REAL DEFAULT 0,
-    totalGastosEfectivo REAL DEFAULT 0,
-    totalGastosNequi REAL DEFAULT 0,
-    montoFinal REAL DEFAULT 0,
-    fechaApertura TEXT,
-    fechaCierre TEXT,
-    estado TEXT DEFAULT 'cerrado'
-  )`);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    montoInicial DOUBLE DEFAULT 0,
+    montoEfectivo DOUBLE DEFAULT 0,
+    montoNequi DOUBLE DEFAULT 0,
+    totalGastosEfectivo DOUBLE DEFAULT 0,
+    totalGastosNequi DOUBLE DEFAULT 0,
+    montoFinal DOUBLE DEFAULT 0,
+    fechaApertura DATETIME,
+    fechaCierre DATETIME,
+    estado VARCHAR(20) DEFAULT 'cerrado'
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
   await run(`CREATE TABLE IF NOT EXISTS pedidos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     mesa TEXT,
-    total REAL,
+    total DOUBLE,
     carrito TEXT,
-    estado TEXT DEFAULT 'pendiente',
-    fecha TEXT DEFAULT CURRENT_TIMESTAMP,
-    fecha_pago TEXT
-  )`);
+    estado VARCHAR(20) DEFAULT 'pendiente',
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_pago DATETIME
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
   await run(`CREATE TABLE IF NOT EXISTS usuarios (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nombre TEXT NOT NULL,
-    correo TEXT UNIQUE NOT NULL,
+    correo VARCHAR(255) UNIQUE NOT NULL,
     contrasena TEXT NOT NULL,
-    rol TEXT DEFAULT 'admin',
-    activo INTEGER DEFAULT 1,
-    fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP
-  )`);
+    rol VARCHAR(20) DEFAULT 'admin',
+    activo TINYINT DEFAULT 1,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
 
-  await run(`CREATE INDEX IF NOT EXISTS idx_ventas_turno ON ventas(turnoId)`);
-  await run(`CREATE INDEX IF NOT EXISTS idx_ventas_tipo ON ventas(tipo)`);
-  await run(`CREATE INDEX IF NOT EXISTS idx_detalle_venta ON detalle_ventas(venta_id)`);
-  await run(`CREATE INDEX IF NOT EXISTS idx_pedidos_estado ON pedidos(estado)`);
-  await run(`CREATE INDEX IF NOT EXISTS idx_usuarios_correo ON usuarios(correo)`);
+  await createIndex(`CREATE INDEX idx_ventas_turno ON ventas(turnoId)`);
+  await createIndex(`CREATE INDEX idx_ventas_tipo ON ventas(tipo)`);
+  await createIndex(`CREATE INDEX idx_detalle_venta ON detalle_ventas(venta_id)`);
+  await createIndex(`CREATE INDEX idx_pedidos_estado ON pedidos(estado)`);
+  await createIndex(`CREATE INDEX idx_usuarios_correo ON usuarios(correo)`);
 
   console.log("  Base de datos inicializada con índices");
 };
