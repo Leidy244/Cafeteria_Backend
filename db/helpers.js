@@ -17,6 +17,36 @@ types.setTypeParser(1082, (v) => v);
 types.setTypeParser(1114, (v) => v);
 types.setTypeParser(1184, (v) => v);
 
+const KEYMAP = {
+  precioventa: "precioVenta",
+  precioingreso: "precioIngreso",
+  subtipo: "subTipo",
+  metodopago: "metodoPago",
+  montorecibido: "montoRecibido",
+  turnoid: "turnoId",
+  montoinicial: "montoInicial",
+  montonequi: "montoNequi",
+  montoefectivo: "montoEfectivo",
+  montofinal: "montoFinal",
+  fechaapertura: "fechaApertura",
+  fechacierre: "fechaCierre",
+  totalgastosefectivo: "totalGastosEfectivo",
+  totalgastosnequi: "totalGastosNequi",
+  fechacreacion: "fechaCreacion",
+  cantidadtotal: "cantidadTotal",
+  gastosefectivo: "gastosEfectivo",
+  gastosnequi: "gastosNequi",
+};
+
+const remapRow = (row) => {
+  if (!row) return row;
+  const out = {};
+  for (const [k, v] of Object.entries(row)) {
+    out[KEYMAP[k] || k] = v;
+  }
+  return out;
+};
+
 const toSqlDate = (value) => {
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return value || null;
@@ -85,13 +115,13 @@ const run = async (sql, params = []) => {
 const get = async (sql, params = []) => {
   const conn = txConn || pool;
   const result = await conn.query(toPostgresParams(sql, cleanParams(params)), cleanParams(params));
-  return result.rows[0] || null;
+  return remapRow(result.rows[0]) || null;
 };
 
 const all = async (sql, params = []) => {
   const conn = txConn || pool;
   const result = await conn.query(toPostgresParams(sql, cleanParams(params)), cleanParams(params));
-  return result.rows;
+  return result.rows.map(remapRow);
 };
 
 const serialize = async () => {
