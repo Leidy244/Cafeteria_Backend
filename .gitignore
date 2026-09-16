@@ -5,5 +5,7 @@ cafeteria.db-wal
 cafeteria-app.exe
 public/imagenes/*
 !public/imagenes/.gitkeep
+!public/imagenes/1788816185337-cafe.jfif
+!public/imagenes/1788816222932-buu.jfif
 .env
 *.log
